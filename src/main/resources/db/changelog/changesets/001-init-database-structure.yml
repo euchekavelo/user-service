@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: euchekavelo
+      comment: init schema for database structure
+      changes:
+        - sqlFile:
+            encoding: UTF-8
+            path: ../sql-scripts/init_schema_for_basic_database_structure.sql
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: 2
+      author: euchekavelo
+      comment: init database structure with indexes
+      changes:
+        - sqlFile:
+            encoding: UTF-8
+            path: ../sql-scripts/basic_database_structure_final_with_indexes.sql
+            relativeToChangelogFile: true
