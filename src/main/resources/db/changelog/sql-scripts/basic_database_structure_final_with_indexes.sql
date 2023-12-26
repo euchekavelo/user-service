@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users_scheme.users (
     phone CHARACTER VARYING,
 	town_id UUID,
 	sex	CHARACTER VARYING(6) NOT NULL,
-	CHECK(sex = 'male' OR sex = 'female'),
+	CHECK(sex = 'MALE' OR sex = 'FEMALE'),
 	FOREIGN KEY (town_id) REFERENCES users_scheme.towns (id) ON UPDATE CASCADE
 );
 

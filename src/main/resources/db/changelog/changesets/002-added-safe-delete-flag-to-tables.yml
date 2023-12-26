@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: euchekavelo
+      comment: added safe delete flag to tables.
+      changes:
+        - sqlFile:
+            encoding: UTF-8
+            path: ../sql-scripts/additional_fields_for_soft_deleted_pattern.sql
+            relativeToChangelogFile: true
