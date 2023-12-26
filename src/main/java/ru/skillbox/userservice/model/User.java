@@ -38,12 +38,12 @@ public class User {
     private Sex sex;
 
     @OneToMany(mappedBy = "sourceUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserSubscription> userSubscriptionList = new ArrayList<>();
+    private List<UserSubscription> userSourceList = new ArrayList<>();
 
     @OneToMany(mappedBy = "destinationUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserSubscription> userDestinationList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserGroup> userGroupList = new ArrayList<>();
 
     private boolean deleted;
