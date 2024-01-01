@@ -1,5 +1,7 @@
 package ru.skillbox.userservice.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.SQLDelete;
@@ -18,12 +20,15 @@ public class UserGroup {
     @ManyToOne
     @MapsId("userId")
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     @ManyToOne
     @MapsId("groupId")
     @JoinColumn(name = "group_id")
+    @JsonBackReference
     private Group group;
 
+    @JsonIgnore
     private boolean deleted;
 }
