@@ -1,14 +1,14 @@
 CREATE TABLE IF NOT EXISTS users_scheme.towns (
 	id UUID PRIMARY KEY DEFAULT gen_random_uuid(), 
-	name CHARACTER VARYING NOT NULL UNIQUE
+	name CHARACTER VARYING NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS users_scheme.users (
 	id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     fullname CHARACTER VARYING NOT NULL,
     birth_date DATE,
-    email CHARACTER VARYING NOT NULL,
-    phone CHARACTER VARYING,
+    email CHARACTER VARYING NOT NULL UNIQUE,
+    phone CHARACTER VARYING UNIQUE,
 	town_id UUID,
 	sex	CHARACTER VARYING(6) NOT NULL,
 	CHECK(sex = 'MALE' OR sex = 'FEMALE'),
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS users_scheme.user_subscriptions (
 
 CREATE TABLE IF NOT EXISTS users_scheme.groups (
 	id UUID PRIMARY KEY DEFAULT gen_random_uuid(), 
-	name CHARACTER VARYING NOT NULL UNIQUE
+	name CHARACTER VARYING NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS users_scheme.users_groups (

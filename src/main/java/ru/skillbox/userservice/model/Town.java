@@ -1,7 +1,9 @@
 package ru.skillbox.userservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -20,11 +22,10 @@ public class Town {
 
     private String name;
 
-    @OneToMany(
-            mappedBy = "town",
-            cascade = CascadeType.MERGE
-    )
+    @OneToMany(mappedBy = "town", cascade = CascadeType.MERGE)
+    @JsonManagedReference
     private List<User> userList = new ArrayList<>();
 
+    @JsonIgnore
     private boolean deleted;
 }

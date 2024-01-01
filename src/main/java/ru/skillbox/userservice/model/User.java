@@ -1,7 +1,10 @@
 package ru.skillbox.userservice.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import ru.skillbox.userservice.model.enums.Sex;
@@ -32,19 +35,24 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "town_id")
+    @JsonBackReference
     private Town town;
 
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
     @OneToMany(mappedBy = "sourceUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<UserSubscription> userSourceList = new ArrayList<>();
 
     @OneToMany(mappedBy = "destinationUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<UserSubscription> userDestinationList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<UserGroup> userGroupList = new ArrayList<>();
 
+    @JsonIgnore
     private boolean deleted;
 }
