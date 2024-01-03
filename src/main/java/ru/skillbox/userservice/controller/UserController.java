@@ -9,9 +9,7 @@ import ru.skillbox.userservice.dto.ShortUserDto;
 import ru.skillbox.userservice.dto.UserDto;
 import ru.skillbox.userservice.dto.ResponseDto;
 import ru.skillbox.userservice.dto.UserSubscriptionDto;
-import ru.skillbox.userservice.exception.TownNotFoundException;
-import ru.skillbox.userservice.exception.UserNotFoundException;
-import ru.skillbox.userservice.exception.UserSubscriptionException;
+import ru.skillbox.userservice.exception.*;
 import ru.skillbox.userservice.model.User;
 import ru.skillbox.userservice.service.UserService;
 
@@ -39,7 +37,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDto> updateUserById(@PathVariable UUID id, @RequestBody UserDto userDto)
+    public ResponseEntity<ResponseDto> updateUserById(@PathVariable UUID id, @Valid @RequestBody UserDto userDto)
             throws UserNotFoundException, TownNotFoundException {
 
         return ResponseEntity.ok(userService.updateUserById(id, userDto));
@@ -62,5 +60,19 @@ public class UserController {
             throws UserSubscriptionException {
 
         return ResponseEntity.ok(userService.unsubscribeFromUser(userSubscriptionDto));
+    }
+
+    @PostMapping("/{userId}/groups/{groupId}")
+    public ResponseEntity<ResponseDto> addUserToGroup(@PathVariable UUID userId, @PathVariable UUID groupId)
+            throws UserNotFoundException, GroupNotFoundException {
+
+        return ResponseEntity.ok(userService.addUserToGroup(userId, groupId));
+    }
+
+    @DeleteMapping("/{userId}/groups/{groupId}")
+    public ResponseEntity<ResponseDto> deleteUserFromGroup(@PathVariable UUID userId, @PathVariable UUID groupId)
+            throws UserGroupException {
+
+        return ResponseEntity.ok(userService.deleteUserFromGroup(userId, groupId));
     }
 }

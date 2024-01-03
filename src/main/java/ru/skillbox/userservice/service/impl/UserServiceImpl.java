@@ -6,17 +6,10 @@ import ru.skillbox.userservice.dto.ShortUserDto;
 import ru.skillbox.userservice.dto.UserDto;
 import ru.skillbox.userservice.dto.ResponseDto;
 import ru.skillbox.userservice.dto.UserSubscriptionDto;
-import ru.skillbox.userservice.exception.TownNotFoundException;
-import ru.skillbox.userservice.exception.UserNotFoundException;
-import ru.skillbox.userservice.exception.UserSubscriptionException;
-import ru.skillbox.userservice.model.Town;
-import ru.skillbox.userservice.model.User;
-import ru.skillbox.userservice.model.UserSubscription;
-import ru.skillbox.userservice.model.UserSubscriptionKey;
+import ru.skillbox.userservice.exception.*;
+import ru.skillbox.userservice.model.*;
 import ru.skillbox.userservice.model.enums.Sex;
-import ru.skillbox.userservice.repository.TownRepository;
-import ru.skillbox.userservice.repository.UserRepository;
-import ru.skillbox.userservice.repository.UserSubscriptionRepository;
+import ru.skillbox.userservice.repository.*;
 import ru.skillbox.userservice.service.UserService;
 
 import java.util.Optional;
@@ -28,14 +21,19 @@ import java.util.UUID;
     private final UserRepository userRepository;
     private final TownRepository townRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
+    private final GroupRepository groupRepository;
+    private final UserGroupRepository userGroupRepository;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, TownRepository townRepository,
-                           UserSubscriptionRepository userSubscriptionRepository) {
+                           UserSubscriptionRepository userSubscriptionRepository, GroupRepository groupRepository,
+                           UserGroupRepository userGroupRepository) {
 
         this.userRepository = userRepository;
         this.townRepository = townRepository;
         this.userSubscriptionRepository = userSubscriptionRepository;
+        this.groupRepository = groupRepository;
+        this.userGroupRepository = userGroupRepository;
     }
 
     @Override
@@ -149,6 +147,47 @@ import java.util.UUID;
         userSubscriptionRepository.delete(optionalUserSubscription.get());
 
         return getResponseDto("The destination user has been unsubscribed successfully.");
+    }
+
+    @Override
+    public ResponseDto addUserToGroup(UUID userId, UUID groupId) throws UserNotFoundException, GroupNotFoundException {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            throw new UserNotFoundException("The user with the specified ID was not found.");
+        }
+
+        Optional<Group> optionalGroup = groupRepository.findById(groupId);
+        if (optionalGroup.isEmpty()) {
+            throw new GroupNotFoundException("The group with the specified ID was not found.");
+        }
+
+        UserGroupKey userGroupKey = new UserGroupKey();
+        userGroupKey.setUserId(userId);
+        userGroupKey.setGroupId(groupId);
+
+        UserGroup userGroup = new UserGroup();
+        userGroup.setUserGroupKey(userGroupKey);
+        userGroup.setUser(optionalUser.get());
+        userGroup.setGroup(optionalGroup.get());
+        userGroupRepository.save(userGroup);
+
+        return getResponseDto("The user has been successfully added to the group.");
+    }
+
+    @Override
+    public ResponseDto deleteUserFromGroup(UUID userId, UUID groupId) throws UserGroupException {
+        UserGroupKey userGroupKey = new UserGroupKey();
+        userGroupKey.setUserId(userId);
+        userGroupKey.setGroupId(groupId);
+
+        Optional<UserGroup> optionalUserGroup = userGroupRepository.findById(userGroupKey);
+        if (optionalUserGroup.isEmpty()) {
+            throw new UserGroupException("Cannot remove a user from a group.");
+        }
+
+        userGroupRepository.delete(optionalUserGroup.get());
+
+        return getResponseDto("The user has been successfully removed from the group.");
     }
 
     private ResponseDto getResponseDto(String message) {

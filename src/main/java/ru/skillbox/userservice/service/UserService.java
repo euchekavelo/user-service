@@ -4,9 +4,7 @@ import ru.skillbox.userservice.dto.ShortUserDto;
 import ru.skillbox.userservice.dto.UserDto;
 import ru.skillbox.userservice.dto.ResponseDto;
 import ru.skillbox.userservice.dto.UserSubscriptionDto;
-import ru.skillbox.userservice.exception.TownNotFoundException;
-import ru.skillbox.userservice.exception.UserNotFoundException;
-import ru.skillbox.userservice.exception.UserSubscriptionException;
+import ru.skillbox.userservice.exception.*;
 import ru.skillbox.userservice.model.User;
 
 import java.util.UUID;
@@ -25,4 +23,8 @@ public interface UserService {
             UserNotFoundException;
 
     ResponseDto unsubscribeFromUser(UserSubscriptionDto userSubscriptionDto) throws UserSubscriptionException;
+
+    ResponseDto addUserToGroup(UUID userId, UUID groupId) throws UserNotFoundException, GroupNotFoundException;
+
+    ResponseDto deleteUserFromGroup(UUID userId, UUID groupId) throws UserGroupException;
 }
