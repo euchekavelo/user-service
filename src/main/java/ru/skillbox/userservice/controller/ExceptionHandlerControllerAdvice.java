@@ -6,9 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.skillbox.userservice.dto.ResponseDto;
-import ru.skillbox.userservice.exception.TownNotFoundException;
-import ru.skillbox.userservice.exception.UserNotFoundException;
-import ru.skillbox.userservice.exception.UserSubscriptionException;
+import ru.skillbox.userservice.exception.*;
 
 import java.sql.SQLException;
 
@@ -18,7 +16,7 @@ public class ExceptionHandlerControllerAdvice {
     private static final String UNIQUE_VIOLATION_STATE = "23505";
 
     @ExceptionHandler({UserNotFoundException.class, TownNotFoundException.class, UserSubscriptionException.class,
-            MethodArgumentNotValidException.class})
+            MethodArgumentNotValidException.class, GroupNotFoundException.class, UserGroupException.class})
     public ResponseEntity<ResponseDto> exceptionHandler(Exception ex) {
         ResponseDto responseDto = new ResponseDto();
         responseDto.setMessage(ex.getMessage());
