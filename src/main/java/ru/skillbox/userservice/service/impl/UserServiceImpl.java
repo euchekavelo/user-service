@@ -42,9 +42,9 @@ import java.util.UUID;
         user.setFullname(shortUserDto.getFullname());
         user.setEmail(shortUserDto.getEmail());
         user.setSex(Sex.valueOf(shortUserDto.getSex()));
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
-        return getResponseDto("User successfully created.");
+        return getResponseDto("User successfully created.", savedUser.getId());
     }
 
     @Override
@@ -78,7 +78,7 @@ import java.util.UUID;
         user.setTown(optionalTown.get());
         userRepository.save(user);
 
-        return getResponseDto("The user was successfully updated.");
+        return getResponseDto("The user was successfully updated.", null);
     }
 
     @Override
@@ -90,7 +90,7 @@ import java.util.UUID;
 
         userRepository.delete(optionalUser.get());
 
-        return getResponseDto("The user with the specified ID was successfully deleted.");
+        return getResponseDto("The user with the specified ID was successfully deleted.", null);
     }
 
     @Override
@@ -126,7 +126,7 @@ import java.util.UUID;
         userSubscription.setDestinationUser(optionalDestinationUser.get());
         userSubscriptionRepository.save(userSubscription);
 
-        return getResponseDto("The target user was successfully subscribed.");
+        return getResponseDto("The target user was successfully subscribed.", null);
     }
 
     @Override
@@ -146,7 +146,7 @@ import java.util.UUID;
 
         userSubscriptionRepository.delete(optionalUserSubscription.get());
 
-        return getResponseDto("The destination user has been unsubscribed successfully.");
+        return getResponseDto("The destination user has been unsubscribed successfully.", null);
     }
 
     @Override
@@ -171,7 +171,7 @@ import java.util.UUID;
         userGroup.setGroup(optionalGroup.get());
         userGroupRepository.save(userGroup);
 
-        return getResponseDto("The user has been successfully added to the group.");
+        return getResponseDto("The user has been successfully added to the group.", null);
     }
 
     @Override
@@ -187,13 +187,14 @@ import java.util.UUID;
 
         userGroupRepository.delete(optionalUserGroup.get());
 
-        return getResponseDto("The user has been successfully removed from the group.");
+        return getResponseDto("The user has been successfully removed from the group.", null);
     }
 
-    private ResponseDto getResponseDto(String message) {
+    private ResponseDto getResponseDto(String message, UUID id) {
         ResponseDto responseDto = new ResponseDto();
         responseDto.setMessage(message);
         responseDto.setResult(true);
+        responseDto.setId(id);
 
         return responseDto;
     }
