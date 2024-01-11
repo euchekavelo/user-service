@@ -26,9 +26,9 @@ public class TownServiceImpl implements TownService {
     public ResponseDto createTown(TownDto townDto) {
         Town town = new Town();
         town.setName(townDto.getName());
-        townRepository.save(town);
+        Town savedTown = townRepository.save(town);
 
-        return getResponseDto("The town has been successfully created.");
+        return getResponseDto("The town has been successfully created.", savedTown.getId());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class TownServiceImpl implements TownService {
 
         townRepository.delete(optionalTown.get());
 
-        return getResponseDto("The town was successfully removed.");
+        return getResponseDto("The town was successfully removed.", null);
     }
 
     @Override
@@ -64,13 +64,14 @@ public class TownServiceImpl implements TownService {
         town.setName(townDto.getName());
         townRepository.save(town);
 
-        return getResponseDto("The town with the specified ID was successfully updated.");
+        return getResponseDto("The town with the specified ID was successfully updated.", null);
     }
 
-    private ResponseDto getResponseDto(String message) {
+    private ResponseDto getResponseDto(String message, UUID id) {
         ResponseDto responseDto = new ResponseDto();
         responseDto.setMessage(message);
         responseDto.setResult(true);
+        responseDto.setId(id);
 
         return responseDto;
     }

@@ -23,6 +23,5 @@ public class UserDto {
 
     private String phone;
 
-    @NotBlank
     private UUID townId;
 }

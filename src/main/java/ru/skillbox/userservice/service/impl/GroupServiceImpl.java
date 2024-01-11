@@ -26,9 +26,9 @@ public class GroupServiceImpl implements GroupService {
     public ResponseDto createGroup(GroupDto groupDto) {
         Group group = new Group();
         group.setName(groupDto.getName());
-        groupRepository.save(group);
+        Group savedGroup = groupRepository.save(group);
 
-        return getResponseDto("The group has been successfully created.");
+        return getResponseDto("The group has been successfully created.", savedGroup.getId());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class GroupServiceImpl implements GroupService {
 
         groupRepository.delete(optionalGroup.get());
 
-        return getResponseDto("The group was successfully removed.");
+        return getResponseDto("The group was successfully removed.", null);
     }
 
     @Override
@@ -64,13 +64,14 @@ public class GroupServiceImpl implements GroupService {
         group.setName(group.getName());
         groupRepository.save(group);
 
-        return getResponseDto("The group with the specified ID was successfully updated.");
+        return getResponseDto("The group with the specified ID was successfully updated.", null);
     }
 
-    private ResponseDto getResponseDto(String message) {
+    private ResponseDto getResponseDto(String message, UUID id) {
         ResponseDto responseDto = new ResponseDto();
         responseDto.setMessage(message);
         responseDto.setResult(true);
+        responseDto.setId(id);
 
         return responseDto;
     }

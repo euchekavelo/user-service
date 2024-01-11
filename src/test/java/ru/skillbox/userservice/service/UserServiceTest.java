@@ -47,6 +47,13 @@ class UserServiceTest {
 
     @Test
     void createUserTestSuccess() {
+        User savedUser = new User();
+        savedUser.setId(UUID.fromString("09cfa0c0-2fe3-47d9-916b-761e59b67ccd"));
+        savedUser.setFullname("Ivanov Ivan Ivanovich");
+        savedUser.setEmail("invanov_test@gmail.com");
+        savedUser.setSex(Sex.valueOf("MALE"));
+
+        Mockito.when(userRepository.save(Mockito.any())).thenReturn(savedUser);
         ShortUserDto shortUserDto = new ShortUserDto();
         shortUserDto.setFullname("Ivanov Ivan Ivanovich");
         shortUserDto.setEmail("invanov_test@gmail.com");

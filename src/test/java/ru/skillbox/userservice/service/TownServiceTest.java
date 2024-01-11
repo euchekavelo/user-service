@@ -31,6 +31,11 @@ class TownServiceTest {
 
     @Test
     void createTownTestSuccess() {
+        Town savedTown = new Town();
+        savedTown.setId(UUID.fromString("11afa0c0-2fe3-47d9-916b-761e59b67bba"));
+        savedTown.setName("Moscow");
+
+        Mockito.when(townRepository.save(Mockito.any(Town.class))).thenReturn(savedTown);
         TownDto townDto = new TownDto();
         townDto.setName("Moscow");
         ResponseDto responseDto = townService.createTown(townDto);

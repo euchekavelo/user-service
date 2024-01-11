@@ -32,6 +32,11 @@ class GroupServiceTest {
 
     @Test
     void createGroupTestSuccess() {
+        Group savedGroup = new Group();
+        savedGroup.setId(UUID.fromString("15afa0c0-2fe3-47d9-916b-761e59b67caa"));
+        savedGroup.setName("Test group");
+
+        Mockito.when(groupRepository.save(Mockito.any(Group.class))).thenReturn(savedGroup);
         GroupDto groupDto = new GroupDto();
         groupDto.setName("Test group");
         ResponseDto responseDto = groupService.createGroup(groupDto);
