@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.backendUserService.deployment.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.backendUserService.label.app }}
+spec:
+  replicas: {{ .Values.backendUserService.replicas.count}}
+  selector: 
+    matchLabels:
+      app: {{ .Values.backendUserService.label.app }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.backendUserService.label.app }}
+    spec:
+      containers:
+      - name: {{ .Values.backendUserService.container.name }}
+        image: {{ .Values.backendUserService.image.name }}:{{ .Values.backendUserService.image.version }}
+        imagePullPolicy: Never
+        ports:
+        - containerPort: {{ .Values.backendUserService.container.port }}
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.configMap.name }}
+              key: DATABASE_URL
+        - name: DATABASE_USER
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.configMap.name }}
+              key: DATABASE_USER
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.configMap.name }}
+              key: DATABASE_PASSWORD
+
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.backendUserService.service.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  type: LoadBalancer
+  selector: 
+    app: {{ .Values.backendUserService.label.app }}
+  ports:
+  - protocol: TCP
+    port: {{ .Values.backendUserService.service.port }}
+    targetPort: {{ .Values.backendUserService.container.port }}
+    nodePort: {{ .Values.backendUserService.service.nodePort }}
