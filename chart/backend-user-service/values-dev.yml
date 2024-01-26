@@ -1,0 +1,14 @@
+namespace: &namespace dev
+
+database:
+  service:
+    nodePort: 30001
+
+
+backendUserService:
+  service:
+    nodePort: 30000
+
+
+ingress:
+  host: userservice-dev.local

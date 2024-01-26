@@ -1,0 +1,55 @@
+namespace: &namespace default
+
+
+configMap:
+  name: user-service-config
+
+
+database:
+  name: users
+  username: postgre_user
+  password: postgre_secret_password
+  deployment:
+    name: deployment-postgresql
+    namespace: *namespace
+  replicas:
+    count: 1
+  label:
+    app: postgresql
+  container:
+    name: postgresql-container
+    port: 5432
+  image:
+    name: postgres
+    version: latest
+  service:
+    name: service-postgresql
+    port: 5432
+    nodePort: 30001
+
+
+backendUserService:
+  label:
+    app: backend-user-service
+  deployment:
+    name: deployment-backend-user-service
+    namespace: *namespace
+  replicas:
+    count: 1
+  container:
+    name: backend-user-service-container
+    port: 8080
+  image:
+    name: backend-user-service-image
+    version: latest
+  service:
+    name: service-backend-user-service
+    port: 80
+    nodePort: 30000
+  datasource:
+    prefixConnectionUrl: jdbc:postgresql
+
+
+ingress:
+  name: backend-user-service-ingress
+  host: userservice-default.local
