@@ -1,0 +1,13 @@
+stages:
+  - build
+  - test
+
+build-job:
+  stage: build
+  script:
+    - echo "Hello, 1"
+
+test-job1:
+  stage: test
+  script:
+    - echo "This job tests something"
