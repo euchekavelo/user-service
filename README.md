@@ -41,7 +41,7 @@ docker build -t backend-user-service-image .
         ```bash
         helm install backend-user-service-suslovdev ./backend-user-service -f ./backend-user-service/values-suslovdev.yml
         ```
-   - Для развертывания деплоя на **suslovprePROD**-неймспейсе:
+   - Для развертывания деплоя на **suslovpreprod**-неймспейсе:
         ```bash
         helm install backend-user-service-suslovpreprod ./backend-user-service -f ./backend-user-service/values-suslovpreprod.yml
         ```
