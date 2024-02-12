@@ -1,0 +1,14 @@
+namespace: &namespace suslovpreprod
+
+database:
+  service:
+    nodePort: 30012
+
+
+backendUserService:
+  service:
+    nodePort: 30013
+
+
+ingress:
+  host: userservice-suslov-preprod.local
