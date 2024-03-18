@@ -2,7 +2,7 @@ before_script:
   - CHCP 65001
 
 variables:
-  APP_IMAGE: euchekavelo/backend-user-service
+  APP_IMAGE: $APP_IMAGE_NAME
 
 stages:
   - test
