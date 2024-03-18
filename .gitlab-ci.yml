@@ -1,0 +1,64 @@
+before_script:
+  - CHCP 65001
+
+variables:
+  APP_IMAGE: euchekavelo/backend-user-service
+
+stages:
+  - test
+  - build
+  - deploy
+
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "feature" || $CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "preprod"
+
+junit-test-job:
+  stage: test
+  script:
+    - ./gradlew clean test
+  tags:
+    - windows
+
+integration-test-job:
+  stage: test
+  script:
+    - ./gradlew clean integrationTest
+  tags:
+    - windows
+
+build-job:
+  stage: build
+  script:
+    - ./gradlew clean bootJar
+  artifacts:
+    paths:
+      - build/libs/*.jar
+  tags:
+    - windows
+
+deploy-to-stand:
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == "feature"
+      variables:
+        APP_TAG: stable-feature
+        DEPLOY_COMMAND: helm upgrade --install backend-user-service-feature ./backend-user-service -f ./backend-user-service/values-feature.yml
+    - if: $CI_COMMIT_BRANCH == "dev"
+      variables:
+        APP_TAG: stable-dev
+        DEPLOY_COMMAND: helm upgrade --install backend-user-service-dev ./backend-user-service -f ./backend-user-service/values-dev.yml
+    - if: $CI_COMMIT_BRANCH == "preprod"
+      variables:
+        APP_TAG: stable-preprod
+        DEPLOY_COMMAND: helm upgrade --install backend-user-service-preprod ./backend-user-service -f ./backend-user-service/values-preprod.yml
+  before_script:
+    - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD
+    - docker build -t ${APP_IMAGE}:${APP_TAG} .
+    - docker push ${APP_IMAGE}:${APP_TAG}
+  script:
+    - cd ./chart
+    - Invoke-Expression $DEPLOY_COMMAND
+    - echo "1222"
+  tags:
+    - windows

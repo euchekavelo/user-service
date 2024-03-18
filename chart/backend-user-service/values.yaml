@@ -9,6 +9,7 @@ database:
   name: users
   username: postgre_user
   password: postgre_secret_password
+  storagePath: /postgresql-storage-default
   deployment:
     name: deployment-postgresql
     namespace: *namespace
@@ -40,8 +41,8 @@ backendUserService:
     name: backend-user-service-container
     port: 8080
   image:
-    name: backend-user-service-image
-    version: latest
+    name: euchekavelo/backend-user-service
+    version: stable-default
   service:
     name: service-backend-user-service
     port: 80

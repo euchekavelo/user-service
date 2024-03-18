@@ -14,11 +14,12 @@ spec:
     metadata:
       labels:
         app: {{ .Values.backendUserService.label.app }}
+        date: "{{ now | unixEpoch }}"
     spec:
       containers:
       - name: {{ .Values.backendUserService.container.name }}
         image: {{ .Values.backendUserService.image.name }}:{{ .Values.backendUserService.image.version }}
-        imagePullPolicy: Never
+        imagePullPolicy: Always
         ports:
         - containerPort: {{ .Values.backendUserService.container.port }}
         env:

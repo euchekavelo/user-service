@@ -1,11 +1,14 @@
 namespace: &namespace test
 
 database:
+  storagePath: /postgresql-storage-test
   service:
     nodePort: 30003
 
 
 backendUserService:
+  image:
+    version: stable-test
   service:
     nodePort: 30002
 

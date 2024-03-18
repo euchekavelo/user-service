@@ -1,11 +1,14 @@
 namespace: &namespace dev
 
 database:
+  storagePath: /postgresql-storage-dev
   service:
     nodePort: 30001
 
 
 backendUserService:
+  image:
+    version: stable-dev
   service:
     nodePort: 30000
 
