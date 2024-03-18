@@ -12,6 +12,7 @@
 * Helm CLI;
 * VirtualBox;
 * GitLab Runner (на базе исполняемой оболочки PowerShell хост-машины).
+
 ---
 
 
@@ -35,16 +36,18 @@ mkdir postgresql-storage-feature
 mkdir postgresql-storage-dev
 mkdir postgresql-storage-preprod
 ```
+
 ---
 
 
 ### Деплой приложения в автоматизированном режиме 
-**ВАЖНО!:** Данный способ работает лишь при работе с версией репозитория проекта, размещенного на сервисе GitLab.<br>
+**ВАЖНО!:** Данный способ работает лишь при работе с версией репозитория проекта, размещенного на сервисе GitLab.<br> 
 
 Для автоматизированного развертывания собранного приложения достаточно произвести фиксацию изменений в виде коммитов в одной
 из веток: **feature**, **dev** или **preprod**.<br>
 При выявлении события фиксации будет производиться тестирование, сборка и поставка обновленной версии микросервиса  с 
 учетом последних изменений на соответствующий ветке подготовленный стенд.
+
 ---
 
 ### Деплой приложения в ручном режиме
@@ -92,6 +95,7 @@ mkdir postgresql-storage-preprod
         ```bash
         helm upgrade --install backend-user-service-preprod ./backend-user-service -f ./backend-user-service/values-preprod.yml
         ```
+
 ---
 
 
@@ -100,4 +104,5 @@ mkdir postgresql-storage-preprod
 ip-адреса ingress'ов каждого контура.
 <br>Наименования хостов для каждой из сред можно посмотреть в соответствующих файлах: *values-feature.yml*, *values-dev.yml* 
 и *values-preprod.yml*.
+
 ---
