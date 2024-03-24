@@ -3,7 +3,7 @@ before_script:
 
 variables:
   APP_IMAGE: $APP_IMAGE_NAME
-  JACOCO_TEST_REPORT_PATH: build/reports/
+  JACOCO_TEST_REPORT_PATH: build/
 
 stages:
   - test
@@ -18,22 +18,19 @@ test-job:
   stage: test
   script:
     - ./gradlew clean test
-  #cache:
-  #  paths:
-  #    - $JACOCO_TEST_REPORT_PATH
-  #  policy: push
-  artifacts:
+  cache:
     paths:
       - $JACOCO_TEST_REPORT_PATH
+    policy: push
   tags:
     - windows
 
 code-quality:
   stage: test
-  #cache:
-  #  paths:
-  #    - $JACOCO_TEST_REPORT_PATH
-  #  policy: pull
+  cache:
+    paths:
+      - $JACOCO_TEST_REPORT_PATH
+    policy: pull
   script:
     - ./gradlew sonar
   tags:
