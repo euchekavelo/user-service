@@ -17,6 +17,9 @@ test-job:
   stage: test
   script:
     - ./gradlew clean test
+  cache:
+    paths:
+      - build/reports/jacoco/test/*.xml
   tags:
     - windows
 
