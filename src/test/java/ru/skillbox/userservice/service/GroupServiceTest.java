@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.skillbox.userservice.config.ConfigGroupServiceTest;
+import ru.skillbox.userservice.config.ConfigGroupService;
 import ru.skillbox.userservice.dto.GroupDto;
 import ru.skillbox.userservice.dto.ResponseDto;
 import ru.skillbox.userservice.exception.GroupNotFoundException;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ConfigGroupServiceTest.class)
+@ContextConfiguration(classes = ConfigGroupService.class)
 class GroupServiceTest {
 
     @Autowired

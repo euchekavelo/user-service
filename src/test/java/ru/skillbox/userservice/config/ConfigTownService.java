@@ -8,7 +8,7 @@ import ru.skillbox.userservice.service.TownService;
 import ru.skillbox.userservice.service.impl.TownServiceImpl;
 
 @TestConfiguration
-public class ConfigTownServiceTest {
+public class ConfigTownService {
 
     @Bean
     public TownRepository townRepository() {

@@ -12,6 +12,8 @@ import ru.skillbox.userservice.service.GroupService;
 import java.util.Optional;
 import java.util.UUID;
 
+import static ru.skillbox.userservice.exception.enums.ExceptionMessage.GROUP_NOT_FOUND_EXCEPTION_MESSAGE;
+
 @Service
 public class GroupServiceImpl implements GroupService {
 
@@ -35,7 +37,7 @@ public class GroupServiceImpl implements GroupService {
     public Group getGroupById(UUID id) throws GroupNotFoundException {
         Optional<Group> optionalGroup = groupRepository.findById(id);
         if (optionalGroup.isEmpty()) {
-            throw new GroupNotFoundException("The group with the specified ID was not found.");
+            throw new GroupNotFoundException(GROUP_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         return optionalGroup.get();
@@ -45,7 +47,7 @@ public class GroupServiceImpl implements GroupService {
     public ResponseDto deleteGroupById(UUID id) throws GroupNotFoundException {
         Optional<Group> optionalGroup = groupRepository.findById(id);
         if (optionalGroup.isEmpty()) {
-            throw new GroupNotFoundException("The group with the specified ID was not found.");
+            throw new GroupNotFoundException(GROUP_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         groupRepository.delete(optionalGroup.get());
@@ -57,7 +59,7 @@ public class GroupServiceImpl implements GroupService {
     public ResponseDto updateGroupById(UUID id, GroupDto groupDto) throws GroupNotFoundException {
         Optional<Group> optionalGroup = groupRepository.findById(id);
         if (optionalGroup.isEmpty()) {
-            throw new GroupNotFoundException("The group with the specified ID was not found.");
+            throw new GroupNotFoundException(GROUP_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         Group group = optionalGroup.get();

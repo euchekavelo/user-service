@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 import ru.skillbox.userservice.model.enums.Sex;
 
 import java.time.LocalDate;
@@ -16,8 +14,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "users", schema = "users_scheme")
-@SQLDelete(sql = "UPDATE users_scheme.users SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
 @Data
 public class User {
 

@@ -8,7 +8,7 @@ import ru.skillbox.userservice.service.UserService;
 import ru.skillbox.userservice.service.impl.UserServiceImpl;
 
 @TestConfiguration
-public class ConfigUserServiceTest {
+public class ConfigUserService {
 
     @Bean
     public UserRepository userRepository() {

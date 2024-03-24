@@ -8,7 +8,7 @@ import ru.skillbox.userservice.service.GroupService;
 import ru.skillbox.userservice.service.impl.GroupServiceImpl;
 
 @TestConfiguration
-public class ConfigGroupServiceTest {
+public class ConfigGroupService {
 
     @Bean
     public GroupRepository groupRepository() {

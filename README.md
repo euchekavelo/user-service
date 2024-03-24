@@ -11,7 +11,16 @@
 * Gradle;
 * Helm CLI;
 * VirtualBox;
-* GitLab Runner (на базе исполняемой оболочки PowerShell хост-машины).
+* GitLab Runner (на базе исполняемой оболочки PowerShell хост-машины);
+* Локальный сервер Sonarqube.
+
+---
+### Запуск локального сервера Sonarqube
+Для запуска локального сервера Sonarqube внутри запущенного докера необходимо перейти в корневую директорию проекта и 
+ввести команду:
+```bash
+docker-compose -f sonarqube-server.yml up -d
+```
 
 ---
 

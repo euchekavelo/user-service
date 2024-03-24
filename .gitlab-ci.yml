@@ -2,7 +2,8 @@ before_script:
   - CHCP 65001
 
 variables:
-  APP_IMAGE: euchekavelo/backend-user-service
+  APP_IMAGE: $APP_IMAGE_NAME
+  JACOCO_BUILD_FILES_PATH: build/
 
 stages:
   - test
@@ -13,17 +14,25 @@ workflow:
   rules:
     - if: $CI_COMMIT_BRANCH == "feature" || $CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "preprod"
 
-junit-test-job:
+test-job:
   stage: test
   script:
     - ./gradlew clean test
+  cache:
+    paths:
+      - $JACOCO_BUILD_FILES_PATH
+    policy: push
   tags:
     - windows
 
-integration-test-job:
+code-quality:
   stage: test
+  cache:
+    paths:
+      - $JACOCO_BUILD_FILES_PATH
+    policy: pull
   script:
-    - ./gradlew clean integrationTest
+    - ./gradlew sonar
   tags:
     - windows
 
@@ -59,6 +68,5 @@ deploy-to-stand:
   script:
     - cd ./chart
     - Invoke-Expression $DEPLOY_COMMAND
-    - echo "1222"
   tags:
     - windows
