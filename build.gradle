@@ -58,8 +58,8 @@ tasks.register('integrationTest', Test) {
 
 sonar {
     properties {
-        property 'sonar.login', System.getenv('SONAR_TOKEN_ACCESS')
-        property 'sonar.host.url', System.getenv('SONAR_HOST_URL')
+        property 'sonar.login', 'squ_bf67e9597d302c4e36e72380cdb577ad718c8bce'/*System.getenv('SONAR_TOKEN_ACCESS')*/
+        property 'sonar.host.url', 'http://localhost:9000'/*System.getenv('SONAR_HOST_URL')*/
         property 'sonar.coverage.exclusions', 'src/main/java/ru/skillbox/userservice/model/**, ' +
                                               'src/main/java/ru/skillbox/userservice/dto/**, ' +
                                               'src/main/java/ru/skillbox/userservice/exception/**, ' +
