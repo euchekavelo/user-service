@@ -13,13 +13,14 @@ workflow:
   rules:
     - if: $CI_COMMIT_BRANCH == "feature" || $CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "preprod"
 
+cache:
+  paths:
+    - build/reports/jacoco/test/*.xml
+
 test-job:
   stage: test
   script:
     - ./gradlew clean test
-  cache:
-    paths:
-      - build/reports/jacoco/test/*.xml
   tags:
     - windows
 
