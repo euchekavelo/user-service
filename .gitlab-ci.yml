@@ -3,7 +3,7 @@ before_script:
 
 variables:
   APP_IMAGE: $APP_IMAGE_NAME
-  JACOCO_TEST_REPORT_PATH: build/reports/jacoco/test/*.xml
+  JACOCO_TEST_REPORT_PATH: build/reports/
 
 stages:
   - test
