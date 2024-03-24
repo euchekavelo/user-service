@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.skillbox.userservice.exception.enums.ExceptionMessage.TOWN_NOT_FOUND_EXCEPTION_MESSAGE;
 
 @SpringBootTest(classes = PostgreSQLContainerConfig.class)
 @AutoConfigureMockMvc
@@ -58,7 +59,7 @@ class TownControllerTest {
         mockMvc.perform(get("/towns/" + townId))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("message")
-                        .value("The town with the specified ID was not found."))
+                        .value(TOWN_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andDo(print());
     }
 
@@ -69,7 +70,7 @@ class TownControllerTest {
         mockMvc.perform(delete("/towns/" + townId))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("message")
-                        .value("The town with the specified ID was not found."))
+                        .value(TOWN_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andDo(print());
     }
 
@@ -117,7 +118,7 @@ class TownControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("id").doesNotExist())
                 .andExpect(jsonPath("message")
-                        .value("The town with the specified ID was not found."))
+                        .value(TOWN_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andExpect(jsonPath("result").value(false))
                 .andDo(print());
     }

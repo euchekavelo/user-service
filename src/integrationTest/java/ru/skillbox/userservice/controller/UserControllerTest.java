@@ -18,6 +18,7 @@ import java.util.UUID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
 
 @SpringBootTest(classes = PostgreSQLContainerConfig.class)
 @AutoConfigureMockMvc
@@ -88,7 +89,7 @@ class UserControllerTest {
         mockMvc.perform(get("/users/" + userId))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("message")
-                        .value("The user with the specified ID was not found."))
+                        .value(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andDo(print());
     }
 
@@ -144,7 +145,7 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("message")
-                        .value("The user with the specified ID was not found."))
+                        .value(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andDo(print());
     }
 
@@ -172,7 +173,7 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("message")
-                        .value("The town with the specified ID was not found."))
+                        .value(TOWN_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andDo(print());
     }
 
@@ -198,7 +199,7 @@ class UserControllerTest {
         mockMvc.perform(delete("/users/" + userId))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("message")
-                        .value("The user with the specified ID was not found."))
+                        .value(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andDo(print());
     }
 
@@ -428,7 +429,7 @@ class UserControllerTest {
         mockMvc.perform(post("/users/" + userId + "/groups/" + groupId))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("message")
-                        .value("The user with the specified ID was not found."))
+                        .value(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andDo(print());
     }
 
@@ -444,7 +445,7 @@ class UserControllerTest {
         mockMvc.perform(post("/users/" + userId + "/groups/" + groupId))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("message")
-                        .value("The group with the specified ID was not found."))
+                        .value(GROUP_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andDo(print());
     }
 

@@ -2,6 +2,8 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.0'
     id 'io.spring.dependency-management' version '1.1.4'
+    id "org.sonarqube" version "4.4.1.3373"
+    id 'jacoco'
 }
 
 group = 'ru.skillbox'
@@ -52,4 +54,26 @@ tasks.register('integrationTest', Test) {
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
     useJUnitPlatform()
+}
+
+sonar {
+    properties {
+        property 'sonar.login', 'squ_418c67b0a685e13df00f9c207c61adb4b87de558'
+        property 'sonar.host.url', 'http://localhost:9000'
+        property 'sonar.coverage.exclusions', 'src/main/java/ru/skillbox/userservice/model/**, ' +
+                                              'src/main/java/ru/skillbox/userservice/dto/**, ' +
+                                              'src/main/java/ru/skillbox/userservice/exception/**, ' +
+                                              'src/main/java/ru/skillbox/userservice/*'
+    }
+}
+
+test {
+    finalizedBy integrationTest, jacocoTestReport
+}
+jacocoTestReport {
+    executionData integrationTest
+    reports {
+        xml.required = true
+    }
+    dependsOn test, integrationTest
 }

@@ -18,6 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.skillbox.userservice.exception.enums.ExceptionMessage.GROUP_NOT_FOUND_EXCEPTION_MESSAGE;
 
 @SpringBootTest(classes = PostgreSQLContainerConfig.class)
 @AutoConfigureMockMvc
@@ -60,7 +61,7 @@ class GroupControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("id").doesNotExist())
                 .andExpect(jsonPath("message")
-                        .value("The group with the specified ID was not found."))
+                        .value(GROUP_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andDo(print());
     }
 
@@ -86,7 +87,7 @@ class GroupControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("id").doesNotExist())
                 .andExpect(jsonPath("message")
-                        .value("The group with the specified ID was not found."))
+                        .value(GROUP_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andExpect(jsonPath("result").value(false))
                 .andDo(print());
     }
@@ -123,7 +124,7 @@ class GroupControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("id").doesNotExist())
                 .andExpect(jsonPath("message")
-                        .value("The group with the specified ID was not found."))
+                        .value(GROUP_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andExpect(jsonPath("result").value(false))
                 .andDo(print());
     }

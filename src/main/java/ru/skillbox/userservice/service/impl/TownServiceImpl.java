@@ -12,6 +12,8 @@ import ru.skillbox.userservice.service.TownService;
 import java.util.Optional;
 import java.util.UUID;
 
+import static ru.skillbox.userservice.exception.enums.ExceptionMessage.TOWN_NOT_FOUND_EXCEPTION_MESSAGE;
+
 @Service
 public class TownServiceImpl implements TownService {
 
@@ -35,7 +37,7 @@ public class TownServiceImpl implements TownService {
     public Town getTownById(UUID id) throws TownNotFoundException {
         Optional<Town> optionalTown = townRepository.findById(id);
         if (optionalTown.isEmpty()) {
-            throw new TownNotFoundException("The town with the specified ID was not found.");
+            throw new TownNotFoundException(TOWN_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         return optionalTown.get();
@@ -45,7 +47,7 @@ public class TownServiceImpl implements TownService {
     public ResponseDto deleteTownById(UUID id) throws TownNotFoundException {
         Optional<Town> optionalTown = townRepository.findById(id);
         if (optionalTown.isEmpty()) {
-            throw new TownNotFoundException("The town with the specified ID was not found.");
+            throw new TownNotFoundException(TOWN_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         townRepository.delete(optionalTown.get());
@@ -57,7 +59,7 @@ public class TownServiceImpl implements TownService {
     public ResponseDto updateTownById(UUID id, TownDto townDto) throws TownNotFoundException {
         Optional<Town> optionalTown = townRepository.findById(id);
         if (optionalTown.isEmpty()) {
-            throw new TownNotFoundException("The town with the specified ID was not found.");
+            throw new TownNotFoundException(TOWN_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         Town town = optionalTown.get();

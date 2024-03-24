@@ -15,6 +15,8 @@ import ru.skillbox.userservice.service.UserService;
 import java.util.Optional;
 import java.util.UUID;
 
+import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
+
 @Service
  public class UserServiceImpl implements UserService {
 
@@ -51,7 +53,7 @@ import java.util.UUID;
     public User getUserById(UUID id) throws UserNotFoundException {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
-            throw new UserNotFoundException("The user with the specified ID was not found.");
+            throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         return optionalUser.get();
@@ -61,12 +63,12 @@ import java.util.UUID;
     public ResponseDto updateUserById(UUID id, UserDto userDto) throws UserNotFoundException, TownNotFoundException {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
-            throw new UserNotFoundException("The user with the specified ID was not found.");
+            throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         Optional<Town> optionalTown = townRepository.findById(userDto.getTownId());
         if (optionalTown.isEmpty()) {
-            throw new TownNotFoundException("The town with the specified ID was not found.");
+            throw new TownNotFoundException(TOWN_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         User user = optionalUser.get();
@@ -85,7 +87,7 @@ import java.util.UUID;
     public ResponseDto deleteUserById(UUID id) throws UserNotFoundException {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
-            throw new UserNotFoundException("The user with the specified ID was not found.");
+            throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         userRepository.delete(optionalUser.get());
@@ -153,12 +155,12 @@ import java.util.UUID;
     public ResponseDto addUserToGroup(UUID userId, UUID groupId) throws UserNotFoundException, GroupNotFoundException {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
-            throw new UserNotFoundException("The user with the specified ID was not found.");
+            throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         Optional<Group> optionalGroup = groupRepository.findById(groupId);
         if (optionalGroup.isEmpty()) {
-            throw new GroupNotFoundException("The group with the specified ID was not found.");
+            throw new GroupNotFoundException(GROUP_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         UserGroupKey userGroupKey = new UserGroupKey();

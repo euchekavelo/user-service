@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.skillbox.userservice.config.ConfigUserServiceTest;
+import ru.skillbox.userservice.config.ConfigUserService;
 import ru.skillbox.userservice.dto.ResponseDto;
 import ru.skillbox.userservice.dto.ShortUserDto;
 import ru.skillbox.userservice.dto.UserDto;
@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ConfigUserServiceTest.class)
+@ContextConfiguration(classes = ConfigUserService.class)
 class UserServiceTest {
 
     @Autowired

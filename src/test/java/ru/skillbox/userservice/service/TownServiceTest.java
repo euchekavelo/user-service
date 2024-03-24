@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.skillbox.userservice.config.ConfigTownServiceTest;
+import ru.skillbox.userservice.config.ConfigTownService;
 import ru.skillbox.userservice.dto.ResponseDto;
 import ru.skillbox.userservice.dto.TownDto;
 import ru.skillbox.userservice.exception.TownNotFoundException;
@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ConfigTownServiceTest.class)
+@ContextConfiguration(classes = ConfigTownService.class)
 class TownServiceTest {
 
     @Autowired
