@@ -71,7 +71,7 @@ public class UserController {
 
     @DeleteMapping("/{userId}/groups/{groupId}")
     public ResponseEntity<ResponseDto> deleteUserFromGroup(@PathVariable UUID userId, @PathVariable UUID groupId)
-            throws UserGroupException {
+            throws UserGroupNotFoundException {
 
         return ResponseEntity.ok(userService.deleteUserFromGroup(userId, groupId));
     }

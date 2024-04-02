@@ -26,5 +26,5 @@ public interface UserService {
 
     ResponseDto addUserToGroup(UUID userId, UUID groupId) throws UserNotFoundException, GroupNotFoundException;
 
-    ResponseDto deleteUserFromGroup(UUID userId, UUID groupId) throws UserGroupException;
+    ResponseDto deleteUserFromGroup(UUID userId, UUID groupId) throws UserGroupNotFoundException;
 }

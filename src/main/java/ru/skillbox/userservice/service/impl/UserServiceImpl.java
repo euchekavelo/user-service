@@ -177,14 +177,14 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
     }
 
     @Override
-    public ResponseDto deleteUserFromGroup(UUID userId, UUID groupId) throws UserGroupException {
+    public ResponseDto deleteUserFromGroup(UUID userId, UUID groupId) throws UserGroupNotFoundException {
         UserGroupKey userGroupKey = new UserGroupKey();
         userGroupKey.setUserId(userId);
         userGroupKey.setGroupId(groupId);
 
         Optional<UserGroup> optionalUserGroup = userGroupRepository.findById(userGroupKey);
         if (optionalUserGroup.isEmpty()) {
-            throw new UserGroupException("Cannot remove a user from a group.");
+            throw new UserGroupNotFoundException("Cannot remove a user from a group.");
         }
 
         userGroupRepository.delete(optionalUserGroup.get());
@@ -193,11 +193,10 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
     }
 
     private ResponseDto getResponseDto(String message, UUID id) {
-        ResponseDto responseDto = new ResponseDto();
-        responseDto.setMessage(message);
-        responseDto.setResult(true);
-        responseDto.setId(id);
-
-        return responseDto;
+        return ResponseDto.builder()
+                .message(message)
+                .id(id)
+                .result(true)
+                .build();
     }
 }

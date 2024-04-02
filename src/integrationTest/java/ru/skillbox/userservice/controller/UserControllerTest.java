@@ -87,7 +87,7 @@ class UserControllerTest {
         UUID userId = UUID.fromString("09cfa0c0-2fe3-47d9-916b-761e59b67ccd");
 
         mockMvc.perform(get("/users/" + userId))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("message")
                         .value(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andDo(print());
@@ -143,7 +143,7 @@ class UserControllerTest {
         mockMvc.perform(put("/users/" + userId)
                         .content(objectMapper.writeValueAsString(userDto))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("message")
                         .value(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andDo(print());
@@ -171,7 +171,7 @@ class UserControllerTest {
         mockMvc.perform(put("/users/" + userId)
                         .content(objectMapper.writeValueAsString(userDto))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("message")
                         .value(TOWN_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andDo(print());
@@ -197,7 +197,7 @@ class UserControllerTest {
         UUID userId = UUID.fromString("09cfa0c0-2fe3-47d9-916b-761e59b67ccd");
 
         mockMvc.perform(delete("/users/" + userId))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("message")
                         .value(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andDo(print());
@@ -247,7 +247,7 @@ class UserControllerTest {
         mockMvc.perform(post("/users/subscription")
                         .content(objectMapper.writeValueAsString(userSubscriptionDto))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("message")
                         .value("The source user with the specified ID was not found."))
                 .andDo(print());
@@ -270,7 +270,7 @@ class UserControllerTest {
         mockMvc.perform(post("/users/subscription")
                         .content(objectMapper.writeValueAsString(userSubscriptionDto))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("message")
                         .value("The destination user with the specified ID was not found."))
                 .andDo(print());
@@ -427,7 +427,7 @@ class UserControllerTest {
         UUID userId = UUID.fromString("09cfa0c0-2fe3-47d9-916b-761e59b67ccd");
 
         mockMvc.perform(post("/users/" + userId + "/groups/" + groupId))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("message")
                         .value(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andDo(print());
@@ -443,7 +443,7 @@ class UserControllerTest {
         UUID groupId = UUID.fromString("15cfa0c0-2fe3-47d1-116b-761e59b67ccd");
 
         mockMvc.perform(post("/users/" + userId + "/groups/" + groupId))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("message")
                         .value(GROUP_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andDo(print());
@@ -472,12 +472,12 @@ class UserControllerTest {
     }
 
     @Test
-    void deleteUserFromGroupThrowUserGroupException() throws Exception {
+    void deleteUserFromGroupThrowUserGroupNotFoundException() throws Exception {
         UUID userId = UUID.fromString("09cfa0c0-2fe3-47d9-916b-761e59b67ccd");
         UUID groupId = UUID.fromString("13cfa0c0-1fe3-47d9-916b-761e59b67ccd");
 
         mockMvc.perform(delete("/users/" + userId + "/groups/" + groupId))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("message")
                         .value("Cannot remove a user from a group."))
                 .andDo(print());;

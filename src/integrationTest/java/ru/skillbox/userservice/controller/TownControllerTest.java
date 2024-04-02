@@ -57,7 +57,7 @@ class TownControllerTest {
         UUID townId = UUID.fromString("11afa0c0-2fe3-47d9-916b-761e59b67bba");
 
         mockMvc.perform(get("/towns/" + townId))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("message")
                         .value(TOWN_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andDo(print());
@@ -68,7 +68,7 @@ class TownControllerTest {
         UUID townId = UUID.fromString("11afa0c0-2fe3-47d9-916b-761e59b67bba");
 
         mockMvc.perform(delete("/towns/" + townId))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("message")
                         .value(TOWN_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
                 .andDo(print());
@@ -115,7 +115,7 @@ class TownControllerTest {
         mockMvc.perform(put("/towns/" + townId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newTownDto)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("id").doesNotExist())
                 .andExpect(jsonPath("message")
                         .value(TOWN_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
