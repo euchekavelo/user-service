@@ -379,7 +379,7 @@ class UserServiceTest {
     }
 
     @Test
-    void deleteUserFromGroupTestSuccess() throws UserGroupException {
+    void deleteUserFromGroupTestSuccess() throws UserGroupNotFoundException {
         UUID userId = UUID.fromString("09cfa0c0-2fe3-47d9-916b-761e59b67ccd");
         UUID groupId = UUID.fromString("15afa0c0-2fe3-47d9-916b-761e59b67caa");
 
@@ -402,6 +402,6 @@ class UserServiceTest {
         userGroupKey.setGroupId(groupId);
         Mockito.when(userGroupRepository.findById(userGroupKey)).thenReturn(Optional.empty());
 
-        assertThrows(UserGroupException.class, () -> userService.deleteUserFromGroup(userId, groupId));
+        assertThrows(UserGroupNotFoundException.class, () -> userService.deleteUserFromGroup(userId, groupId));
     }
 }

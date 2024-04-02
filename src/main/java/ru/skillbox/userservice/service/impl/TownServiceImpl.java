@@ -70,11 +70,10 @@ public class TownServiceImpl implements TownService {
     }
 
     private ResponseDto getResponseDto(String message, UUID id) {
-        ResponseDto responseDto = new ResponseDto();
-        responseDto.setMessage(message);
-        responseDto.setResult(true);
-        responseDto.setId(id);
-
-        return responseDto;
+        return ResponseDto.builder()
+                .message(message)
+                .id(id)
+                .result(true)
+                .build();
     }
 }

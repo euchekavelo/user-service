@@ -58,7 +58,7 @@ class GroupControllerTest {
         UUID groupId = UUID.fromString("15afa0c0-2fe3-47d9-916b-761e59b67caa");
 
         mockMvc.perform(get("/groups/" + groupId))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("id").doesNotExist())
                 .andExpect(jsonPath("message")
                         .value(GROUP_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
@@ -84,7 +84,7 @@ class GroupControllerTest {
         UUID groupId = UUID.fromString("15afa0c0-2fe3-47d9-916b-761e59b67caa");
 
         mockMvc.perform(get("/groups/" + groupId))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("id").doesNotExist())
                 .andExpect(jsonPath("message")
                         .value(GROUP_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))
@@ -121,7 +121,7 @@ class GroupControllerTest {
         mockMvc.perform(put("/groups/" + groupId)
                         .content(objectMapper.writeValueAsString(newGroupDto))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("id").doesNotExist())
                 .andExpect(jsonPath("message")
                         .value(GROUP_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage()))

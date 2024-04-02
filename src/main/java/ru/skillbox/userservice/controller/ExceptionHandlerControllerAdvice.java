@@ -15,27 +15,30 @@ public class ExceptionHandlerControllerAdvice {
 
     private static final String UNIQUE_VIOLATION_STATE = "23505";
 
-    @ExceptionHandler({UserNotFoundException.class, TownNotFoundException.class, UserSubscriptionException.class,
-            MethodArgumentNotValidException.class, GroupNotFoundException.class, UserGroupException.class})
-    public ResponseEntity<ResponseDto> exceptionHandler(Exception ex) {
-        ResponseDto responseDto = new ResponseDto();
-        responseDto.setMessage(ex.getMessage());
-        responseDto.setResult(false);
-
-        return ResponseEntity.badRequest().body(responseDto);
+    @ExceptionHandler({UserSubscriptionException.class, MethodArgumentNotValidException.class})
+    public ResponseEntity<ResponseDto> handleException(Exception ex) {
+        return ResponseEntity.badRequest().body(getResponseDto(ex.getMessage()));
     }
 
     @ExceptionHandler(SQLException.class)
-    public ResponseEntity<ResponseDto> exceptionHandler(SQLException ex) {
-        ResponseDto responseDto = new ResponseDto();
-        responseDto.setResult(false);
-
+    public ResponseEntity<ResponseDto> handleSqlException(SQLException ex) {
         if (ex.getSQLState().equals(UNIQUE_VIOLATION_STATE)) {
-            responseDto.setMessage(ex.getMessage());
-            return ResponseEntity.badRequest().body(responseDto);
-        } else {
-            responseDto.setMessage("Internal server error.");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
+            return ResponseEntity.badRequest().body(getResponseDto(ex.getMessage()));
         }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(getResponseDto(ex.getMessage()));
+    }
+
+    @ExceptionHandler({UserNotFoundException.class, TownNotFoundException.class, GroupNotFoundException.class,
+            UserGroupNotFoundException.class})
+    public ResponseEntity<ResponseDto> handleNotFoundException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getResponseDto(ex.getMessage()));
+    }
+
+    private ResponseDto getResponseDto(String message) {
+        return ResponseDto.builder()
+                .message(message)
+                .result(false)
+                .build();
     }
 }
