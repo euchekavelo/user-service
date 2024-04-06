@@ -13,6 +13,18 @@ stages:
 workflow:
   rules:
     - if: $CI_COMMIT_BRANCH == "feature" || $CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "preprod"
+    - if: $CI_COMMIT_BRANCH == "feature"
+      variables:
+        APP_TAG: stable-feature
+        DEPLOY_COMMAND: helm upgrade --install backend-user-service-feature ./backend-user-service -f ./backend-user-service/values-feature.yml
+    - if: $CI_COMMIT_BRANCH == "dev"
+      variables:
+        APP_TAG: stable-dev
+        DEPLOY_COMMAND: helm upgrade --install backend-user-service-dev ./backend-user-service -f ./backend-user-service/values-dev.yml
+    - if: $CI_COMMIT_BRANCH == "preprod"
+      variables:
+        APP_TAG: stable-preprod
+        DEPLOY_COMMAND: helm upgrade --install backend-user-service-preprod ./backend-user-service -f ./backend-user-service/values-preprod.yml
 
 test-job:
   stage: test
@@ -48,19 +60,19 @@ build-job:
 
 deploy-to-stand:
   stage: deploy
-  rules:
-    - if: $CI_COMMIT_BRANCH == "feature"
-      variables:
-        APP_TAG: stable-feature
-        DEPLOY_COMMAND: helm upgrade --install backend-user-service-feature ./backend-user-service -f ./backend-user-service/values-feature.yml
-    - if: $CI_COMMIT_BRANCH == "dev"
-      variables:
-        APP_TAG: stable-dev
-        DEPLOY_COMMAND: helm upgrade --install backend-user-service-dev ./backend-user-service -f ./backend-user-service/values-dev.yml
-    - if: $CI_COMMIT_BRANCH == "preprod"
-      variables:
-        APP_TAG: stable-preprod
-        DEPLOY_COMMAND: helm upgrade --install backend-user-service-preprod ./backend-user-service -f ./backend-user-service/values-preprod.yml
+  #rules:
+  #  - if: $CI_COMMIT_BRANCH == "feature"
+  #    variables:
+  #      APP_TAG: stable-feature
+  #      DEPLOY_COMMAND: helm upgrade --install backend-user-service-feature ./backend-user-service -f ./backend-user-service/values-feature.yml
+  #  - if: $CI_COMMIT_BRANCH == "dev"
+  #    variables:
+  #      APP_TAG: stable-dev
+  #      DEPLOY_COMMAND: helm upgrade --install backend-user-service-dev ./backend-user-service -f ./backend-user-service/values-dev.yml
+  #  - if: $CI_COMMIT_BRANCH == "preprod"
+  #    variables:
+  #      APP_TAG: stable-preprod
+  #      DEPLOY_COMMAND: helm upgrade --install backend-user-service-preprod ./backend-user-service -f ./backend-user-service/values-preprod.yml
   before_script:
     - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD
     - docker build -t ${APP_IMAGE}:${APP_TAG} .
