@@ -10,6 +10,7 @@ plugins {
 semver {
     tagPrefix("v")
     initialVersion("0.0.1")
+    findProperty("semver.overrideVersion")?.toString()?.let { overrideVersion(it) }
 }
 
 group = 'ru.skillbox'
