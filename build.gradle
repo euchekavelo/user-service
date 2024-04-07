@@ -7,6 +7,11 @@ plugins {
     id 'com.figure.gradle.semver-plugin' version '1.10.0'
 }
 
+semver {
+    tagPrefix("v")
+    initialVersion("0.0.1")
+}
+
 group = 'ru.skillbox'
 version = semver.version
 
@@ -77,9 +82,4 @@ jacocoTestReport {
         xml.required = true
     }
     dependsOn test, integrationTest
-}
-
-semver {
-    tagPrefix("v")
-    initialVersion("0.0.1")
 }
