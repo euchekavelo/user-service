@@ -59,7 +59,8 @@ deploy-to-stand:
         DEPLOY_COMMAND: helm upgrade --install backend-user-service-dev ./backend-user-service -f ./backend-user-service/values-dev.yml
     - if: $CI_COMMIT_BRANCH == "preprod"
       variables:
-        APP_TAG: stable-preprod
+        #APP_TAG: stable-preprod
+        APP_TAG: v0.0.1
         DEPLOY_COMMAND: helm upgrade --install backend-user-service-preprod ./backend-user-service -f ./backend-user-service/values-preprod.yml
   before_script:
     - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD
