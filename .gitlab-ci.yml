@@ -76,7 +76,7 @@ deploy-to-stand:
     #- docker push ${APP_IMAGE}:$(git describe --tags --abbrev=0)
     ##- docker build -t ${APP_IMAGE}:$CI_COMMIT_BRANCH .
     ##- docker push ${APP_IMAGE}:$CI_COMMIT_BRANCH
-    - docker login -u $NEXUS_LOCAL_LOGIN ---password-stdin $NEXUS_LOCAL_PASSWORD $NEXUS_SERVER_ADDRESS
+    - docker login -u $NEXUS_LOCAL_LOGIN -p $NEXUS_LOCAL_PASSWORD $NEXUS_SERVER_ADDRESS
   script:
     - cd ./chart
     - Invoke-Expression $DEPLOY_COMMAND
