@@ -39,7 +39,7 @@ code-quality:
 build-job:
   stage: build
   before_script:
-    - docker login -u $NEXUS_LOCAL_LOGIN ---password-stdin $NEXUS_LOCAL_PASSWORD $NEXUS_SERVER_ADDRESS
+    - docker login -u $NEXUS_LOCAL_LOGIN -p $NEXUS_LOCAL_PASSWORD $NEXUS_SERVER_ADDRESS
   script:
     - ./gradlew clean bootJar
     - docker build -t ${APP_IMAGE}:$(git describe --tags --abbrev=0) .
