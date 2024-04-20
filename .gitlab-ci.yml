@@ -39,7 +39,7 @@ code-quality:
 build-job:
   stage: build
   before_script:
-    - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD
+    - docker login -u $NEXUS_LOCAL_LOGIN ---password-stdin $NEXUS_LOCAL_PASSWORD $NEXUS_SERVER_ADDRESS
   script:
     - ./gradlew clean bootJar
     - docker build -t ${APP_IMAGE}:$(git describe --tags --abbrev=0) .
@@ -70,12 +70,13 @@ deploy-to-stand:
                         --set backendUserService.image.version=$(git describe --tags --abbrev=0) 
                         backend-user-service-preprod ./backend-user-service 
                         -f ./backend-user-service/values-preprod.yml
-  #before_script:
+  before_script:
     #- docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD
     #- docker build -t ${APP_IMAGE}:$(git describe --tags --abbrev=0) .
     #- docker push ${APP_IMAGE}:$(git describe --tags --abbrev=0)
     ##- docker build -t ${APP_IMAGE}:$CI_COMMIT_BRANCH .
     ##- docker push ${APP_IMAGE}:$CI_COMMIT_BRANCH
+    - docker login -u $NEXUS_LOCAL_LOGIN ---password-stdin $NEXUS_LOCAL_PASSWORD $NEXUS_SERVER_ADDRESS
   script:
     - cd ./chart
     - Invoke-Expression $DEPLOY_COMMAND
