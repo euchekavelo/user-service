@@ -74,6 +74,6 @@ deploy-to-stand:
   script:
     - cd ./chart
     - Invoke-Expression $DEPLOY_COMMAND
-    - echo '21313456789'
+    - echo '213134567891'
   tags:
     - windows
