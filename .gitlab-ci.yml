@@ -56,19 +56,19 @@ deploy-to-stand:
     - if: $CI_COMMIT_BRANCH == "feature"
       variables:
         #APP_TAG: stable-feature
-        DEPLOY_COMMAND: helm upgrade --install backend-user-service-feature ./backend-user-service \
+        DEPLOY_COMMAND: helm upgrade --install backend-user-service-feature ./backend-user-service 
                         -f ./backend-user-service/values-feature.yml
     - if: $CI_COMMIT_BRANCH == "dev"
       variables:
         #APP_TAG: stable-dev
-        DEPLOY_COMMAND: helm upgrade --install backend-user-service-dev ./backend-user-service \
+        DEPLOY_COMMAND: helm upgrade --install backend-user-service-dev ./backend-user-service 
                         -f ./backend-user-service/values-dev.yml
     - if: $CI_COMMIT_BRANCH == "preprod"
       variables:
         #APP_TAG: stable-preprod
-        DEPLOY_COMMAND: helm upgrade --install \
-                        --set backendUserService.image.version=$(git describe --tags --abbrev=0) \
-                        backend-user-service-preprod ./backend-user-service \
+        DEPLOY_COMMAND: helm upgrade --install 
+                        --set backendUserService.image.version=$(git describe --tags --abbrev=0) 
+                        backend-user-service-preprod ./backend-user-service 
                         -f ./backend-user-service/values-preprod.yml
   #before_script:
     #- docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD
