@@ -8,7 +8,7 @@ database:
 
 backendUserService:
   image:
-    version: stable-test
+    version: latest-test
   service:
     nodePort: 30002
 

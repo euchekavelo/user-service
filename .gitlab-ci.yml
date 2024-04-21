@@ -25,6 +25,7 @@ test-job:
   tags:
     - windows
 
+
 code-quality:
   stage: test
   cache:
@@ -35,6 +36,7 @@ code-quality:
     - ./gradlew sonar
   tags:
     - windows
+
 
 build-job:
   stage: build
@@ -47,25 +49,34 @@ build-job:
   tags:
     - windows
 
+
 deploy-to-stand:
   stage: deploy
   rules:
     - if: $CI_COMMIT_BRANCH == "feature"
       variables:
-        DEPLOY_COMMAND: helm upgrade --install backend-user-service-feature ./backend-user-service 
+        IMAGE_TAG: $(git describe --tags --abbrev=0)-feature
+        DEPLOY_COMMAND: helm upgrade --install
+                        --set backendUserService.image.version=$IMAGE_TAG 
+                        backend-user-service-feature ./backend-user-service 
                         -f ./backend-user-service/values-feature.yml
+
     - if: $CI_COMMIT_BRANCH == "dev"
       variables:
-        DEPLOY_COMMAND: helm upgrade --install backend-user-service-dev ./backend-user-service 
+        IMAGE_TAG: $(git describe --tags --abbrev=0)-dev
+        DEPLOY_COMMAND: helm upgrade --install
+                        --set backendUserService.image.version=$IMAGE_TAG
+                        backend-user-service-dev ./backend-user-service 
                         -f ./backend-user-service/values-dev.yml
+
     - if: $CI_COMMIT_BRANCH == "preprod"
       variables:
+        IMAGE_TAG: $(git describe --tags --abbrev=0)-preprod
         DEPLOY_COMMAND: helm upgrade --install 
-                        --set backendUserService.image.version=$(git describe --tags --abbrev=0) 
+                        --set backendUserService.image.version=$IMAGE_TAG
                         backend-user-service-preprod ./backend-user-service 
                         -f ./backend-user-service/values-preprod.yml
-  #before_script:
-  #  - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD
+
   script:
     - cd ./chart
     - Invoke-Expression $DEPLOY_COMMAND

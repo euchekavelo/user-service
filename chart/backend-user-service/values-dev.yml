@@ -8,7 +8,7 @@ database:
 
 backendUserService:
   image:
-    version: stable-dev
+    version: latest-dev
   service:
     nodePort: 30000
 

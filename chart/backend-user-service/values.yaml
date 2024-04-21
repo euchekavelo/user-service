@@ -42,7 +42,7 @@ backendUserService:
     port: 8080
   image:
     name: euchekavelo/backend-user-service
-    version: stable-default
+    version: latest-default
   service:
     name: service-backend-user-service
     port: 80

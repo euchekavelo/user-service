@@ -8,7 +8,7 @@ database:
 
 backendUserService:
   image:
-    version: stable-feature
+    version: latest-feature
   service:
     nodePort: 30012
 
