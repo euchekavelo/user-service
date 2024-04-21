@@ -25,6 +25,7 @@ test-job:
   tags:
     - windows
 
+
 code-quality:
   stage: test
   cache:
@@ -36,38 +37,45 @@ code-quality:
   tags:
     - windows
 
+
 build-job:
   stage: build
+  before_script:
+    - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD
   script:
     - ./gradlew clean bootJar
-  artifacts:
-    paths:
-      - build/libs/*.jar
+    - docker build -t ${APP_IMAGE}:$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH} .
+    - docker push ${APP_IMAGE}:$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
   tags:
     - windows
+
 
 deploy-to-stand:
   stage: deploy
   rules:
     - if: $CI_COMMIT_BRANCH == "feature"
       variables:
-        APP_TAG: stable-feature
-        DEPLOY_COMMAND: helm upgrade --install backend-user-service-feature ./backend-user-service -f ./backend-user-service/values-feature.yml
+        DEPLOY_COMMAND: helm upgrade --install
+                        --set backendUserService.image.version=$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
+                        backend-user-service-feature ./backend-user-service 
+                        -f ./backend-user-service/values-feature.yml
+
     - if: $CI_COMMIT_BRANCH == "dev"
       variables:
-        APP_TAG: stable-dev
-        DEPLOY_COMMAND: helm upgrade --install backend-user-service-dev ./backend-user-service -f ./backend-user-service/values-dev.yml
+        DEPLOY_COMMAND: helm upgrade --install
+                        --set backendUserService.image.version=$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
+                        backend-user-service-dev ./backend-user-service 
+                        -f ./backend-user-service/values-dev.yml
+
     - if: $CI_COMMIT_BRANCH == "preprod"
       variables:
-        APP_TAG: stable-preprod
-        DEPLOY_COMMAND: helm upgrade --install backend-user-service-preprod ./backend-user-service -f ./backend-user-service/values-preprod.yml
-  before_script:
-    - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD
-    - docker build -t ${APP_IMAGE}:${APP_TAG} .
-    - docker push ${APP_IMAGE}:${APP_TAG}
+        DEPLOY_COMMAND: helm upgrade --install 
+                        --set backendUserService.image.version=$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
+                        backend-user-service-preprod ./backend-user-service 
+                        -f ./backend-user-service/values-preprod.yml
+
   script:
     - cd ./chart
     - Invoke-Expression $DEPLOY_COMMAND
-    - echo '21313'
   tags:
     - windows

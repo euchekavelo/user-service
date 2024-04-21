@@ -38,6 +38,8 @@ spec:
             configMapKeyRef:
               name: {{ .Values.configMap.name }}
               key: DATABASE_PASSWORD
+      imagePullSecrets:
+        - name: private-docker-registry
 
 
 ---

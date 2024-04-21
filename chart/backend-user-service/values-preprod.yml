@@ -8,7 +8,7 @@ database:
 
 backendUserService:
   image:
-    version: stable-preprod
+    version: latest-preprod
   service:
     nodePort: 30022
 
