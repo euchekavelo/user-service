@@ -46,6 +46,24 @@ mkdir postgresql-storage-dev
 mkdir postgresql-storage-preprod
 ```
 
+4. На локальной хост-машине ввести следующие команды для создания пространства имен для каждой из сред:
+```bash
+kubectl create namespace feauture
+kubectl create namespace dev
+kubectl create namespace preprod
+```
+
+5. На локальной хост-машине для каждой среды создать **secret**, хранящий настройки подключения к приватному хранилищу 
+образов Docker:
+```bash
+kubectl create secret docker-registry private-docker-registry `
+--docker-server=<доменный адрес сервера приватного репозитория> `
+--docker-username=<имя пользователя> `
+--docker-password=<пароль> `
+--docker-email=<адрес почты> `
+--namespace=<наименование пространства среды>
+```
+
 ---
 
 
@@ -80,15 +98,15 @@ mkdir postgresql-storage-preprod
 3. Собрать docker-образ микросервиса для интересующего стенда:
     - Для стенда **feature**
       ```bash
-      docker build -t euchekavelo/backend-user-service:stable-feature .
+      docker build -t euchekavelo/backend-user-service:latest-feature .
       ```
     - Для стенда **dev**
       ```bash
-      docker build -t euchekavelo/backend-user-service:stable-dev .
+      docker build -t euchekavelo/backend-user-service:latest-dev .
       ```
     - Для стенда **preprod**
       ```bash
-      docker build -t euchekavelo/backend-user-service:stable-preprod .
+      docker build -t euchekavelo/backend-user-service:latest-preprod .
       ```    
 
 4. Внутри корневой папки проекта перейти в директорию **chart** и выполнить ряд команд:

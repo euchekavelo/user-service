@@ -6,41 +6,32 @@ services:
       - "9000:9000"
 
 
-  nexus:
-    image: sonatype/nexus3:latest
+  psql:
+    image: postgres:latest
     ports:
-      - "9001:8081"
-      - "9123:8123"
+      - "5432:5432"
+    restart: on-failure
+    environment:
+      - POSTGRES_DB=users
+      - POSTGRES_USER=postgre_user
+      - POSTGRES_PASSWORD=postgre_secret_password
     volumes:
-      - ./nexus/data:/nexus-data
+      - database-data:/var/lib/postgresql/data/
 
 
-  #psql:
-  #  image: postgres:latest
-  #  ports:
-  #    - "5432:5432"
-  #  restart: on-failure
-  #  environment:
-  #    - POSTGRES_DB=users
-  #    - POSTGRES_USER=postgre_user
-  #    - POSTGRES_PASSWORD=postgre_secret_password
-  #  volumes:
-  #    - database-data:/var/lib/postgresql/data/
+  user-service:
+    image: user-service:latest
+    build: '.'
+    restart: on-failure
+    depends_on:
+      - psql
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://psql:5432/users
+      - SPRING_DATASOURCE_USERNAME=postgre_user
+      - SPRING_DATASOURCE_PASSWORD=postgre_secret_password
+    ports:
+      - "8080:8080"
 
 
-  #user-service:
-  #  image: user-service:latest
-  #  build: '.'
-  #  restart: on-failure
-  #  depends_on:
-  #    - psql
-  #  environment:
-  #    - SPRING_DATASOURCE_URL=jdbc:postgresql://psql:5432/users
-  #    - SPRING_DATASOURCE_USERNAME=postgre_user
-  #    - SPRING_DATASOURCE_PASSWORD=postgre_secret_password
-  #  ports:
-  #    - "8080:8080"
-
-
-#volumes:
-#  database-data:
+volumes:
+  database-data:
