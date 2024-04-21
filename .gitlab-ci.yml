@@ -64,8 +64,8 @@ deploy-to-stand:
                         --set backendUserService.image.version=$(git describe --tags --abbrev=0) 
                         backend-user-service-preprod ./backend-user-service 
                         -f ./backend-user-service/values-preprod.yml
-  before_script:
-    - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD
+  #before_script:
+  #  - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD
   script:
     - cd ./chart
     - Invoke-Expression $DEPLOY_COMMAND
