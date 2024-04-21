@@ -41,7 +41,7 @@ backendUserService:
     name: backend-user-service-container
     port: 8080
   image:
-    name: 127.0.0.1:9123/backend-user-service
+    name: euchekavelo/backend-user-service
     version: stable-default
   service:
     name: service-backend-user-service

@@ -39,14 +39,11 @@ code-quality:
 build-job:
   stage: build
   before_script:
-    - docker login -u $NEXUS_LOCAL_LOGIN -p $NEXUS_LOCAL_PASSWORD $NEXUS_SERVER_ADDRESS
+    - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD
   script:
     - ./gradlew clean bootJar
     - docker build -t ${APP_IMAGE}:$(git describe --tags --abbrev=0) .
     - docker push ${APP_IMAGE}:$(git describe --tags --abbrev=0)
-  #artifacts:
-  #  paths:
-  #    - build/libs/*.jar
   tags:
     - windows
 
@@ -55,28 +52,20 @@ deploy-to-stand:
   rules:
     - if: $CI_COMMIT_BRANCH == "feature"
       variables:
-        #APP_TAG: stable-feature
         DEPLOY_COMMAND: helm upgrade --install backend-user-service-feature ./backend-user-service 
                         -f ./backend-user-service/values-feature.yml
     - if: $CI_COMMIT_BRANCH == "dev"
       variables:
-        #APP_TAG: stable-dev
         DEPLOY_COMMAND: helm upgrade --install backend-user-service-dev ./backend-user-service 
                         -f ./backend-user-service/values-dev.yml
     - if: $CI_COMMIT_BRANCH == "preprod"
       variables:
-        #APP_TAG: stable-preprod
         DEPLOY_COMMAND: helm upgrade --install 
                         --set backendUserService.image.version=$(git describe --tags --abbrev=0) 
                         backend-user-service-preprod ./backend-user-service 
                         -f ./backend-user-service/values-preprod.yml
   before_script:
-    #- docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD
-    #- docker build -t ${APP_IMAGE}:$(git describe --tags --abbrev=0) .
-    #- docker push ${APP_IMAGE}:$(git describe --tags --abbrev=0)
-    ##- docker build -t ${APP_IMAGE}:$CI_COMMIT_BRANCH .
-    ##- docker push ${APP_IMAGE}:$CI_COMMIT_BRANCH
-    - docker login -u $NEXUS_LOCAL_LOGIN -p $NEXUS_LOCAL_PASSWORD $NEXUS_SERVER_ADDRESS
+    - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD
   script:
     - cd ./chart
     - Invoke-Expression $DEPLOY_COMMAND

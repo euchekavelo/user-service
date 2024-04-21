@@ -39,7 +39,7 @@ spec:
               name: {{ .Values.configMap.name }}
               key: DATABASE_PASSWORD
       imagePullSecrets:
-        - name: nexus-preprod
+        - name: private-docker-registry
 
 
 ---
