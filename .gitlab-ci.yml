@@ -3,6 +3,7 @@ before_script:
 
 variables:
   APP_IMAGE: $APP_IMAGE_NAME
+  IMAGE_TAG: $(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
   JACOCO_BUILD_FILES_PATH: build/
 
 stages:
@@ -44,8 +45,8 @@ build-job:
     - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD
   script:
     - ./gradlew clean bootJar
-    - docker build -t ${APP_IMAGE}:$(git describe --tags --abbrev=0) .
-    - docker push ${APP_IMAGE}:$(git describe --tags --abbrev=0)
+    - docker build -t ${APP_IMAGE}:${IMAGE_TAG} .
+    - docker push ${APP_IMAGE}:${IMAGE_TAG}
   tags:
     - windows
 
