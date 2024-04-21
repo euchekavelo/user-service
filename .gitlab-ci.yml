@@ -3,7 +3,6 @@ before_script:
 
 variables:
   APP_IMAGE: $APP_IMAGE_NAME
-  IMAGE_TAG: $(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
   JACOCO_BUILD_FILES_PATH: build/
 
 stages:
@@ -45,8 +44,8 @@ build-job:
     - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD
   script:
     - ./gradlew clean bootJar
-    - docker build -t ${APP_IMAGE}:${IMAGE_TAG} .
-    - docker push ${APP_IMAGE}:${IMAGE_TAG}
+    - docker build -t ${APP_IMAGE}:$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH} .
+    - docker push ${APP_IMAGE}:$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
   tags:
     - windows
 
@@ -56,25 +55,22 @@ deploy-to-stand:
   rules:
     - if: $CI_COMMIT_BRANCH == "feature"
       variables:
-        IMAGE_TAG: $(git describe --tags --abbrev=0)-feature
         DEPLOY_COMMAND: helm upgrade --install
-                        --set backendUserService.image.version=$IMAGE_TAG 
+                        --set backendUserService.image.version=$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
                         backend-user-service-feature ./backend-user-service 
                         -f ./backend-user-service/values-feature.yml
 
     - if: $CI_COMMIT_BRANCH == "dev"
       variables:
-        IMAGE_TAG: $(git describe --tags --abbrev=0)-dev
         DEPLOY_COMMAND: helm upgrade --install
-                        --set backendUserService.image.version=$IMAGE_TAG
+                        --set backendUserService.image.version=$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
                         backend-user-service-dev ./backend-user-service 
                         -f ./backend-user-service/values-dev.yml
 
     - if: $CI_COMMIT_BRANCH == "preprod"
       variables:
-        IMAGE_TAG: $(git describe --tags --abbrev=0)-preprod
         DEPLOY_COMMAND: helm upgrade --install 
-                        --set backendUserService.image.version=$IMAGE_TAG
+                        --set backendUserService.image.version=$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
                         backend-user-service-preprod ./backend-user-service 
                         -f ./backend-user-service/values-preprod.yml
 
