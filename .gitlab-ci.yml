@@ -2,6 +2,10 @@ before_script:
   - CHCP 65001
 
 variables:
+  BRANCH_FEATURE: feature
+  BRANCH_PREPROD: preprod
+  BRANCH_DEV: dev
+  BRANCH_PROD: main
   APP_IMAGE: $APP_IMAGE_NAME
   JACOCO_BUILD_FILES_PATH: build/
 
@@ -72,7 +76,7 @@ deploy-to-feature:
   variables:
     ENV: feature
   rules:
-    - if: $CI_COMMIT_BRANCH == "feature"
+    - if: $CI_COMMIT_BRANCH == $BRANCH_FEATURE
 
 
 deploy-to-dev:
@@ -80,7 +84,7 @@ deploy-to-dev:
   variables:
     ENV: dev
   rules:
-    - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == $BRANCH_DEV
 
 
 deploy-to-preprod:
@@ -88,7 +92,8 @@ deploy-to-preprod:
   variables:
     ENV: preprod
   rules:
-    - if: $CI_COMMIT_BRANCH == "preprod"
+    - if: $CI_COMMIT_BRANCH == $BRANCH_PREPROD
+      when: manual
 
 #deploy-to-stand:
 #  stage: deploy

@@ -1,0 +1,17 @@
+namespace: &namespace prod
+
+database:
+  storagePath: /postgresql-storage-prod
+  service:
+    nodePort: 30033
+
+
+backendUserService:
+  image:
+    version: latest-prod
+  service:
+    nodePort: 30032
+
+
+ingress:
+  host: userservice-prod.local
