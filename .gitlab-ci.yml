@@ -50,32 +50,72 @@ build-job:
     - windows
 
 
-deploy-to-stand:
+.deploy-to-stand-template:
   stage: deploy
-  rules:
-    - if: $CI_COMMIT_BRANCH == "feature"
-      variables:
-        DEPLOY_COMMAND: helm upgrade --install
-                        --set backendUserService.image.version=$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
-                        backend-user-service-feature ./backend-user-service 
-                        -f ./backend-user-service/values-feature.yml
-
-    - if: $CI_COMMIT_BRANCH == "dev"
-      variables:
-        DEPLOY_COMMAND: helm upgrade --install
-                        --set backendUserService.image.version=$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
-                        backend-user-service-dev ./backend-user-service 
-                        -f ./backend-user-service/values-dev.yml
-
-    - if: $CI_COMMIT_BRANCH == "preprod"
-      variables:
-        DEPLOY_COMMAND: helm upgrade --install 
-                        --set backendUserService.image.version=$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
-                        backend-user-service-preprod ./backend-user-service 
-                        -f ./backend-user-service/values-preprod.yml
-
+  variables:
+    EMV: default
+    DEPLOY_COMMAND: helm upgrade --install
+                    --set backendUserService.image.version=$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
+                    backend-user-service-${ENV} ./backend-user-service
+                    -f ./backend-user-service/values-${ENV}.yml
   script:
     - cd ./chart
     - Invoke-Expression $DEPLOY_COMMAND
+  environment:
+    name: $ENV
   tags:
     - windows
+
+
+deploy-to-feature:
+  extends: .deploy-to-stand-template
+  variables:
+    ENV: feature
+  rules:
+    - if: $CI_COMMIT_BRANCH == "feature"
+
+
+deploy-to-dev:
+  extends: .deploy-to-stand-template
+  variables:
+    ENV: dev
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev"
+
+
+deploy-to-preprod:
+  extends: .deploy-to-stand-template
+  variables:
+    ENV: preprod
+  rules:
+    - if: $CI_COMMIT_BRANCH == "preprod"
+
+#deploy-to-stand:
+#  stage: deploy
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == "feature"
+#      variables:
+#        DEPLOY_COMMAND: helm upgrade --install
+#                        --set backendUserService.image.version=$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
+#                        backend-user-service-feature ./backend-user-service
+#                        -f ./backend-user-service/values-feature.yml
+#
+#    - if: $CI_COMMIT_BRANCH == "dev"
+#      variables:
+#        DEPLOY_COMMAND: helm upgrade --install
+#                        --set backendUserService.image.version=$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
+#                        backend-user-service-dev ./backend-user-service
+#                        -f ./backend-user-service/values-dev.yml
+#
+#    - if: $CI_COMMIT_BRANCH == "preprod"
+#      variables:
+#        DEPLOY_COMMAND: helm upgrade --install
+#                        --set backendUserService.image.version=$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
+#                        backend-user-service-preprod ./backend-user-service
+#                        -f ./backend-user-service/values-preprod.yml
+#
+#  script:
+#    - cd ./chart
+#    - Invoke-Expression $DEPLOY_COMMAND
+#  tags:
+#    - windows
