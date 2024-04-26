@@ -115,4 +115,4 @@ deploy-to-prod:
     ENV: prod
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" #$CI_COMMIT_BRANCH == $BRANCH_PROD
-      when: manual
+      #when: manual
