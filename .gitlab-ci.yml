@@ -12,6 +12,7 @@ variables:
 stages:
   - test
   - build
+  - release
   - deploy
 
 workflow:
