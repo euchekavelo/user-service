@@ -116,3 +116,5 @@ release-job:
     description: "Latest stable version."
   script:
     - echo "Creating release"
+  tags:
+    - windows
