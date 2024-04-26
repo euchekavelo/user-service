@@ -101,7 +101,7 @@ release:
   rules:
     - if: $CI_COMMIT_TAG
       when: never
-    - if: $CI_COMMIT_REF_NAME == $BRANCH_PROD
+    - if: $CI_COMMIT_BRANCH == $BRANCH_PROD
   release:
     tag_name: $CI_COMMIT_TAG
     description: "Latest stable version."
