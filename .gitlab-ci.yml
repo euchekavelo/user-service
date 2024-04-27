@@ -107,6 +107,8 @@ deploy-to-prod:
 
 release-job:
   stage: release
+  variables:
+    TAG_NAME: ""
   rules:
   #  - if: $CI_COMMIT_TAG
   #    when: never
