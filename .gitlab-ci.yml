@@ -110,13 +110,13 @@ release-job:
   rules:
   #  - if: $CI_COMMIT_TAG
   #    when: never
-    - if: $CI_COMMIT_REF_NAME == $BRANCH_PROD #$CI_COMMIT_BRANCH == $BRANCH_PROD
+    - if: $CI_COMMIT_REF_NAME == $BRANCH_PREPROD #$CI_COMMIT_BRANCH == $BRANCH_PROD
   #release:
   #  tag_name: $(Set-Variable -Name "TAG_NAME" -Value $(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH})
   #  description: "Latest stable version."
-  before_script:
-    - $(Set-Variable -Name "TAG_NAME" -Value $(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH})
+  #before_script:
+  #  - $(Set-Variable -Name "TAG_NAME" -Value $(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH})
   script:
-    - echo ${TAG_NAME} #echo "Creating release"
+    - echo ${CI_COMMIT_TAG} #echo "Creating release"
   tags:
     - windows
