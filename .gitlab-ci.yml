@@ -8,6 +8,7 @@ variables:
   BRANCH_PROD: main
   APP_IMAGE: $APP_IMAGE_NAME
   JACOCO_BUILD_FILES_PATH: build/
+  TAG: $(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
 
 stages:
   - test
@@ -60,7 +61,7 @@ build-job:
   stage: deploy
   variables:
     DEPLOY_COMMAND: helm upgrade --install
-                    --set backendUserService.image.version=$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
+                    --set backendUserService.image.version=$TAG
                     backend-user-service-${ENV} ./backend-user-service
                     -f ./backend-user-service/values-${ENV}.yml
   script:
@@ -117,7 +118,5 @@ release-job:
     description: "Latest stable version."
   script:
     - echo "Creating release"
-  only:
-    - tags
   tags:
     - windows
