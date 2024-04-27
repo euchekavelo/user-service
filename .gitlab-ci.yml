@@ -1,5 +1,6 @@
 before_script:
   - CHCP 65001
+  - ${TAG}=$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
 
 variables:
   BRANCH_FEATURE: feature
@@ -8,7 +9,7 @@ variables:
   BRANCH_PROD: main
   APP_IMAGE: $APP_IMAGE_NAME
   JACOCO_BUILD_FILES_PATH: build/
-  TAG: Invoke-Expression $(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
+  TAG: ""
 
 stages:
   - test
