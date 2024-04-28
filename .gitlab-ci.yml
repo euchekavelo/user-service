@@ -119,12 +119,13 @@ release-job:
 
       $body = @"
       {
-          `"tag_name`": `"v0.1.38`",
-          `"description`": `"Test release`"
+          "tag_name": $(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH},
+          "description": "Test release"
       }
       "@
 
-      $response = Invoke-RestMethod 'https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/releases' -Method 'POST' -Headers $headers -Body $body
-      $response | ConvertTo-Json
+      Invoke-RestMethod 'https://gitlab.com/api/v4/projects/55960702/releases' -Method 'POST' 
+                        -Headers $headers 
+                        -Body $body
   tags:
     - windows
