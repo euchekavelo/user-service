@@ -118,8 +118,8 @@ release-job:
 
       $body = @"
       {
-          "tag_name": v0.1.35,
-          "description": "Test release"
+          "tag_name": `"v0.1.35`",
+          "description": `"Test release`"
       }
       "@
 
