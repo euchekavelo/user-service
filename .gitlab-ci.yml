@@ -112,6 +112,7 @@ create-release-job:
     - if: $CI_COMMIT_REF_NAME == $BRANCH_PROD
   script:
     - $global:tag_name = "$(git describe --tags --abbrev=0)"
+    - echo 123
     - |
       $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
       $headers.Add("Content-Type", "application/json")
