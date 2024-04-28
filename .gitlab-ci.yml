@@ -8,7 +8,7 @@ variables:
   BRANCH_PROD: main
   APP_IMAGE: $APP_IMAGE_NAME
   JACOCO_BUILD_FILES_PATH: build/
-  TAG: $CI_COMMIT_TAG
+  TAG: $(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
 
 stages:
   - test
@@ -51,8 +51,8 @@ build-job:
     - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD
   script:
     - ./gradlew clean bootJar
-    - docker build -t ${APP_IMAGE}:${TAG} .
-    - docker push ${APP_IMAGE}:${TAG}
+    - docker build -t ${APP_IMAGE}:$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH} .
+    - docker push ${APP_IMAGE}:$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
   tags:
     - windows
 
@@ -110,13 +110,21 @@ deploy-to-prod:
 release-job:
   stage: release
   rules:
-  #  - if: $CI_COMMIT_TAG
-  #    when: never
     - if: $CI_COMMIT_REF_NAME == $BRANCH_PREPROD #$CI_COMMIT_BRANCH == $BRANCH_PROD
-  release:
-    tag_name: $TAG
-    description: "Latest stable version."
   script:
-    - echo "Creating release"
+    - |
+      $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+      $headers.Add("Content-Type", "application/json")
+      $headers.Add("PRIVATE-TOKEN", ${GITLAB_TOKEN})
+
+      $body = @"
+      {
+          `"tag_name`": `"v0.1.38`",
+          `"description`": `"Test release`"
+      }
+      "@
+
+      $response = Invoke-RestMethod 'https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/releases' -Method 'POST' -Headers $headers -Body $body
+      $response | ConvertTo-Json
   tags:
     - windows
