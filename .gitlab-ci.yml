@@ -8,7 +8,6 @@ variables:
   BRANCH_PROD: main
   APP_IMAGE: $APP_IMAGE_NAME
   JACOCO_BUILD_FILES_PATH: build/
-  TAG: $(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
 
 stages:
   - test
@@ -116,16 +115,17 @@ release-job:
       $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
       $headers.Add("Content-Type", "application/json")
       $headers.Add("PRIVATE-TOKEN", ${GITLAB_TOKEN})
+      $tag = v0.1.35
 
       $body = @"
       {
-          "tag_name": $(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH},
+          "tag_name": $tag,
           "description": "Test release"
       }
       "@
 
-      Invoke-RestMethod 'https://gitlab.com/api/v4/projects/55960702/releases' -Method 'POST' 
-                        -Headers $headers 
+      Invoke-RestMethod 'https://gitlab.com/api/v4/projects/55960702/releases' -Method 'POST' `
+                        -Headers $headers `
                         -Body $body
   tags:
     - windows
