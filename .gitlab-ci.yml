@@ -111,7 +111,7 @@ release-job:
   #rules:
   #  - if: $CI_COMMIT_REF_NAME == $BRANCH_PREPROD #$CI_COMMIT_BRANCH == $BRANCH_PROD
   script:
-    - $global:Var1 = 123123
+    - $global:Var1 = $(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
     - $Var1
 #    - |
 #      $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
