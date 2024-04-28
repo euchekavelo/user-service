@@ -9,7 +9,7 @@ variables:
   BRANCH_PROD: main
   APP_IMAGE: $APP_IMAGE_NAME
   JACOCO_BUILD_FILES_PATH: build/
-  TAG: ""
+  TAG:
 
 stages:
   - test
