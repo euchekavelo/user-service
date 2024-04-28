@@ -44,6 +44,7 @@ cd ../
 mkdir postgresql-storage-feature
 mkdir postgresql-storage-dev
 mkdir postgresql-storage-preprod
+mkdir postgresql-storage-prod
 ```
 
 4. На локальной хост-машине ввести следующие команды для создания пространства имен для каждой из сред:
@@ -51,6 +52,7 @@ mkdir postgresql-storage-preprod
 kubectl create namespace feauture
 kubectl create namespace dev
 kubectl create namespace preprod
+kubectl create namespace prod
 ```
 
 5. На локальной хост-машине для каждой среды создать **secret**, хранящий настройки подключения к приватному хранилищу 

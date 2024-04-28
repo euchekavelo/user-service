@@ -60,12 +60,12 @@ build-job:
   stage: deploy
   variables:
     DEPLOY_COMMAND: helm upgrade --install
-                    --set backendUserService.image.version=$TAG
+                    --set backendUserService.image.version=$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
                     backend-user-service-${ENV} ./backend-user-service
                     -f ./backend-user-service/values-${ENV}.yml
   script:
     - cd ./chart
-    - Invoke-Expression $DEPLOY_COMMAND
+    - $DEPLOY_COMMAND
   environment:
     name: $ENV
   tags:
