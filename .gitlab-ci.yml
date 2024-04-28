@@ -1,6 +1,6 @@
 before_script:
   - CHCP 65001
-  - $TAG=$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
+  - $TAG=[String]$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}
 
 variables:
   BRANCH_FEATURE: feature
