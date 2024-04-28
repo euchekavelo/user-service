@@ -65,7 +65,7 @@ build-job:
                     -f ./backend-user-service/values-${ENV}.yml
   script:
     - cd ./chart
-    - $DEPLOY_COMMAND
+    - Invoke-Expression $DEPLOY_COMMAND
   environment:
     name: $ENV
   tags:
