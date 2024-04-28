@@ -106,25 +106,27 @@ deploy-to-prod:
       when: manual
 
 
-#release-job:
-#  stage: release
-#  rules:
-#    - if: $CI_COMMIT_REF_NAME == $BRANCH_PREPROD #$CI_COMMIT_BRANCH == $BRANCH_PROD
-#  script:
-#    - |
-#      $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-#      $headers.Add("Content-Type", "application/json")
-#      $headers.Add("PRIVATE-TOKEN", ${GITLAB_TOKEN})
-#
-#      $body = @"
-#      {
-#          `"tag_name`": `"$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}`",
-#          `"description`": `"Test release`"
-#      }
-#      "@
-#
-#      Invoke-RestMethod 'https://gitlab.com/api/v4/projects/55960702/releases' -Method 'POST' `
-#                        -Headers $headers `
-#                        -Body $body
-#  tags:
-#    - windows
+release-job:
+  stage: release
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $BRANCH_PREPROD #$CI_COMMIT_BRANCH == $BRANCH_PROD
+  script:
+    - $global:Var1 = 123123
+    - $Var1
+    #- |
+    #  $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+    #  $headers.Add("Content-Type", "application/json")
+    #  $headers.Add("PRIVATE-TOKEN", ${GITLAB_TOKEN})
+    #
+    #  $body = @"
+    #  {
+    #      `"tag_name`": `"$(git describe --tags --abbrev=0)-${CI_COMMIT_BRANCH}`",
+    #      `"description`": `"Test release`"
+    #  }
+    #  "@
+    #
+    #  Invoke-RestMethod 'https://gitlab.com/api/v4/projects/55960702/releases' -Method 'POST' `
+    #                    -Headers $headers `
+    #                    -Body $body
+  tags:
+    - windows
