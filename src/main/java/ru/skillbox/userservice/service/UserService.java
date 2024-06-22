@@ -2,8 +2,9 @@ package ru.skillbox.userservice.service;
 
 import ru.skillbox.userservice.dto.ShortUserDto;
 import ru.skillbox.userservice.dto.UserDto;
-import ru.skillbox.userservice.dto.ResponseDto;
+import ru.skillbox.userservice.dto.response.ResponseDto;
 import ru.skillbox.userservice.dto.UserSubscriptionDto;
+import ru.skillbox.userservice.dto.response.UserResponseDto;
 import ru.skillbox.userservice.exception.*;
 import ru.skillbox.userservice.model.User;
 
@@ -13,7 +14,7 @@ public interface UserService {
 
     ResponseDto createUser(ShortUserDto shortUserDto);
 
-    User getUserById(UUID id) throws UserNotFoundException;
+    UserResponseDto getUserById(UUID id) throws UserNotFoundException;
 
     ResponseDto updateUserById(UUID id, UserDto userDto) throws UserNotFoundException, TownNotFoundException;
 

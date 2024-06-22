@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.skillbox.userservice.config.ConfigTownService;
-import ru.skillbox.userservice.dto.ResponseDto;
+import ru.skillbox.userservice.dto.response.ResponseDto;
 import ru.skillbox.userservice.dto.TownDto;
 import ru.skillbox.userservice.exception.TownNotFoundException;
 import ru.skillbox.userservice.model.Town;

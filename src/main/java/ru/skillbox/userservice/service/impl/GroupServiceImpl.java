@@ -3,7 +3,7 @@ package ru.skillbox.userservice.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.skillbox.userservice.dto.GroupDto;
-import ru.skillbox.userservice.dto.ResponseDto;
+import ru.skillbox.userservice.dto.response.ResponseDto;
 import ru.skillbox.userservice.exception.GroupNotFoundException;
 import ru.skillbox.userservice.model.Group;
 import ru.skillbox.userservice.repository.GroupRepository;

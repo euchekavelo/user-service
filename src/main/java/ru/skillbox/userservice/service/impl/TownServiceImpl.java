@@ -2,7 +2,7 @@ package ru.skillbox.userservice.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.skillbox.userservice.dto.ResponseDto;
+import ru.skillbox.userservice.dto.response.ResponseDto;
 import ru.skillbox.userservice.dto.TownDto;
 import ru.skillbox.userservice.exception.TownNotFoundException;
 import ru.skillbox.userservice.model.Town;
