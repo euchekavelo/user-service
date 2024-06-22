@@ -7,8 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.userservice.dto.ShortUserDto;
 import ru.skillbox.userservice.dto.UserDto;
-import ru.skillbox.userservice.dto.ResponseDto;
+import ru.skillbox.userservice.dto.response.ResponseDto;
 import ru.skillbox.userservice.dto.UserSubscriptionDto;
+import ru.skillbox.userservice.dto.response.UserResponseDto;
 import ru.skillbox.userservice.exception.*;
 import ru.skillbox.userservice.model.User;
 import ru.skillbox.userservice.service.UserService;
@@ -32,7 +33,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable UUID id) throws UserNotFoundException {
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable UUID id) throws UserNotFoundException {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 

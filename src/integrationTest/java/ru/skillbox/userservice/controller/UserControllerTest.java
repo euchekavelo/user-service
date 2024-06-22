@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.skillbox.userservice.config.PostgreSQLContainerConfig;
 import ru.skillbox.userservice.dto.*;
+import ru.skillbox.userservice.dto.response.ResponseDto;
 
 import java.time.LocalDate;
 import java.util.UUID;

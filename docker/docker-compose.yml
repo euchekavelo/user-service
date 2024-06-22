@@ -1,9 +1,9 @@
 version: '3'
 services:
-  sonarqube:
-    image: sonarqube:9.9.4-community
-    ports:
-      - "9000:9000"
+  #sonarqube:
+  #  image: sonarqube:9.9.4-community
+  #  ports:
+  #    - "9000:9000"
 
 
   psql:
@@ -19,18 +19,18 @@ services:
       - database-data:/var/lib/postgresql/data/
 
 
-  user-service:
-    image: user-service:latest
-    build: '.'
-    restart: on-failure
-    depends_on:
-      - psql
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://psql:5432/users
-      - SPRING_DATASOURCE_USERNAME=postgre_user
-      - SPRING_DATASOURCE_PASSWORD=postgre_secret_password
-    ports:
-      - "8080:8080"
+  #user-service:
+  #  image: user-service:latest
+  #  build: '.'
+  #  restart: on-failure
+  #  depends_on:
+  #    - psql
+  #  environment:
+  #    - SPRING_DATASOURCE_URL=jdbc:postgresql://psql:5432/users
+  #    - SPRING_DATASOURCE_USERNAME=postgre_user
+  #    - SPRING_DATASOURCE_PASSWORD=postgre_secret_password
+  #  ports:
+  #    - "8080:8080"
 
 
 volumes:

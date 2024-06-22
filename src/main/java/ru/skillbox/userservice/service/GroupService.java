@@ -1,7 +1,7 @@
 package ru.skillbox.userservice.service;
 
 import ru.skillbox.userservice.dto.GroupDto;
-import ru.skillbox.userservice.dto.ResponseDto;
+import ru.skillbox.userservice.dto.response.ResponseDto;
 import ru.skillbox.userservice.exception.GroupNotFoundException;
 import ru.skillbox.userservice.model.Group;
 

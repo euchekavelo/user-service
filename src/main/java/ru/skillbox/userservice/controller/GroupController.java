@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.userservice.dto.GroupDto;
-import ru.skillbox.userservice.dto.ResponseDto;
+import ru.skillbox.userservice.dto.response.ResponseDto;
 import ru.skillbox.userservice.exception.GroupNotFoundException;
 import ru.skillbox.userservice.model.Group;
 import ru.skillbox.userservice.service.GroupService;

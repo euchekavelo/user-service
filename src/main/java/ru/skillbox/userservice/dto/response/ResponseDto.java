@@ -1,4 +1,4 @@
-package ru.skillbox.userservice.dto;
+package ru.skillbox.userservice.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;

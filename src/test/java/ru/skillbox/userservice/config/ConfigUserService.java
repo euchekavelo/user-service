@@ -1,8 +1,12 @@
 package ru.skillbox.userservice.config;
 
+import org.mapstruct.factory.Mappers;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import ru.skillbox.userservice.mapper.GroupMapper;
+import ru.skillbox.userservice.mapper.TownMapper;
+import ru.skillbox.userservice.mapper.UserMapper;
 import ru.skillbox.userservice.repository.*;
 import ru.skillbox.userservice.service.UserService;
 import ru.skillbox.userservice.service.impl.UserServiceImpl;
@@ -36,8 +40,23 @@ public class ConfigUserService {
     }
 
     @Bean
+    public UserMapper userMapper() {
+        return Mappers.getMapper(UserMapper.class);
+    }
+
+    @Bean
+    public GroupMapper groupMapper() {
+        return Mappers.getMapper(GroupMapper.class);
+    }
+
+    @Bean
+    public TownMapper townMapper() {
+        return Mappers.getMapper(TownMapper.class);
+    }
+
+    @Bean
     public UserService userService() {
         return new UserServiceImpl(userRepository(), townRepository(), userSubscriptionRepository(),
-                groupRepository(), userGroupRepository());
+                groupRepository(), userGroupRepository(), userMapper());
     }
 }

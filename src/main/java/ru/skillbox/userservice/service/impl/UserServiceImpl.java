@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.skillbox.userservice.dto.ShortUserDto;
 import ru.skillbox.userservice.dto.UserDto;
-import ru.skillbox.userservice.dto.ResponseDto;
+import ru.skillbox.userservice.dto.response.ResponseDto;
 import ru.skillbox.userservice.dto.UserSubscriptionDto;
+import ru.skillbox.userservice.dto.response.UserResponseDto;
 import ru.skillbox.userservice.exception.*;
+import ru.skillbox.userservice.mapper.UserMapper;
 import ru.skillbox.userservice.model.*;
 import ru.skillbox.userservice.model.enums.Sex;
 import ru.skillbox.userservice.repository.*;
@@ -25,17 +27,19 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
     private final UserSubscriptionRepository userSubscriptionRepository;
     private final GroupRepository groupRepository;
     private final UserGroupRepository userGroupRepository;
+    private final UserMapper userMapper;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, TownRepository townRepository,
                            UserSubscriptionRepository userSubscriptionRepository, GroupRepository groupRepository,
-                           UserGroupRepository userGroupRepository) {
+                           UserGroupRepository userGroupRepository, UserMapper userMapper) {
 
         this.userRepository = userRepository;
         this.townRepository = townRepository;
         this.userSubscriptionRepository = userSubscriptionRepository;
         this.groupRepository = groupRepository;
         this.userGroupRepository = userGroupRepository;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -50,13 +54,13 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
     }
 
     @Override
-    public User getUserById(UUID id) throws UserNotFoundException {
+    public UserResponseDto getUserById(UUID id) throws UserNotFoundException {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
             throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
-        return optionalUser.get();
+        return userMapper.userToUserResponseDto(optionalUser.get());
     }
 
     @Override

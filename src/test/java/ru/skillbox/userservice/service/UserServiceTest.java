@@ -7,11 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.skillbox.userservice.config.ConfigUserService;
-import ru.skillbox.userservice.dto.ResponseDto;
+import ru.skillbox.userservice.dto.response.ResponseDto;
 import ru.skillbox.userservice.dto.ShortUserDto;
 import ru.skillbox.userservice.dto.UserDto;
 import ru.skillbox.userservice.dto.UserSubscriptionDto;
+import ru.skillbox.userservice.dto.response.UserResponseDto;
 import ru.skillbox.userservice.exception.*;
+import ru.skillbox.userservice.mapper.GroupMapper;
+import ru.skillbox.userservice.mapper.TownMapper;
+import ru.skillbox.userservice.mapper.UserMapper;
 import ru.skillbox.userservice.model.*;
 import ru.skillbox.userservice.model.enums.Sex;
 import ru.skillbox.userservice.repository.*;
@@ -45,6 +49,15 @@ class UserServiceTest {
     @Autowired
     private UserGroupRepository userGroupRepository;
 
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private GroupMapper groupMapper;
+
+    @Autowired
+    private TownMapper townMapper;
+
     @Test
     void createUserTestSuccess() {
         User savedUser = new User();
@@ -73,9 +86,9 @@ class UserServiceTest {
         user.setSex(Sex.MALE);
         Optional<User> optionalUser = Optional.of(user);
         Mockito.when(userRepository.findById(Mockito.any(UUID.class))).thenReturn(optionalUser);
-        User savedUser = userService.getUserById(uuid);
 
-        assertThat(savedUser.getEmail()).isEqualTo("invanov_test@gmail.com");
+        UserResponseDto userResponseDto = userService.getUserById(uuid);
+        assertThat(userResponseDto.getEmail()).isEqualTo("invanov_test@gmail.com");
     }
 
     @Test

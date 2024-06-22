@@ -8,7 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.skillbox.userservice.config.ConfigGroupService;
 import ru.skillbox.userservice.dto.GroupDto;
-import ru.skillbox.userservice.dto.ResponseDto;
+import ru.skillbox.userservice.dto.response.ResponseDto;
 import ru.skillbox.userservice.exception.GroupNotFoundException;
 import ru.skillbox.userservice.model.Group;
 import ru.skillbox.userservice.repository.GroupRepository;
