@@ -1,6 +1,5 @@
 package ru.skillbox.userservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,7 +22,4 @@ public class Group {
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<UserGroup> userGroupList = new ArrayList<>();
-
-    @JsonIgnore
-    private boolean deleted;
 }

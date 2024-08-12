@@ -2,9 +2,12 @@ package ru.skillbox.userservice.config;
 
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mockito;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import ru.skillbox.userservice.config.properties.S3MinioProperties;
 import ru.skillbox.userservice.mapper.GroupMapper;
+import ru.skillbox.userservice.mapper.PhotoMapper;
 import ru.skillbox.userservice.mapper.TownMapper;
 import ru.skillbox.userservice.mapper.UserMapper;
 import ru.skillbox.userservice.repository.*;
@@ -12,7 +15,13 @@ import ru.skillbox.userservice.service.UserService;
 import ru.skillbox.userservice.service.impl.UserServiceImpl;
 
 @TestConfiguration
+@EnableConfigurationProperties
 public class ConfigUserService {
+
+    @Bean
+    public S3MinioProperties s3MinioProperties() {
+        return new S3MinioProperties();
+    }
 
     @Bean
     public UserRepository userRepository() {
@@ -52,6 +61,11 @@ public class ConfigUserService {
     @Bean
     public TownMapper townMapper() {
         return Mappers.getMapper(TownMapper.class);
+    }
+
+    @Bean
+    public PhotoMapper photoMapper() {
+        return Mappers.getMapper(PhotoMapper.class);
     }
 
     @Bean

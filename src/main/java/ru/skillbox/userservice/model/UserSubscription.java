@@ -1,7 +1,6 @@
 package ru.skillbox.userservice.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -30,7 +29,4 @@ public class UserSubscription {
 
     @CreationTimestamp
     private LocalDateTime creationTime;
-
-    @JsonIgnore
-    private boolean deleted;
 }

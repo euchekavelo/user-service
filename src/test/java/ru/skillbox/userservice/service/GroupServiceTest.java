@@ -8,7 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.skillbox.userservice.config.ConfigGroupService;
 import ru.skillbox.userservice.dto.GroupDto;
-import ru.skillbox.userservice.dto.response.ResponseDto;
+import ru.skillbox.userservice.dto.response.GroupResponseDto;
 import ru.skillbox.userservice.exception.GroupNotFoundException;
 import ru.skillbox.userservice.model.Group;
 import ru.skillbox.userservice.repository.GroupRepository;
@@ -39,9 +39,9 @@ class GroupServiceTest {
         Mockito.when(groupRepository.save(Mockito.any(Group.class))).thenReturn(savedGroup);
         GroupDto groupDto = new GroupDto();
         groupDto.setName("Test group");
-        ResponseDto responseDto = groupService.createGroup(groupDto);
+        GroupResponseDto groupResponseDto = groupService.createGroup(groupDto);
 
-        assertThat(responseDto.getMessage()).isEqualTo("The group has been successfully created.");
+        assertThat(groupResponseDto.getName()).isNotBlank();
     }
 
     @Test
@@ -51,10 +51,10 @@ class GroupServiceTest {
         group.setName("Test group");
         group.setId(groupId);
         Mockito.when(groupRepository.findById(groupId)).thenReturn(Optional.of(group));
-        Group savedGroup = groupService.getGroupById(groupId);
+        GroupResponseDto groupResponseDto = groupService.getGroupById(groupId);
 
-        assertThat(savedGroup.getId()).isEqualTo(groupId);
-        assertThat(savedGroup.getName()).isEqualTo("Test group");
+        assertThat(groupResponseDto.getId()).isEqualTo(groupId);
+        assertThat(groupResponseDto.getName()).isEqualTo("Test group");
     }
 
     @Test
@@ -66,13 +66,11 @@ class GroupServiceTest {
     }
 
     @Test
-    void deleteGroupByIdTestSuccess() throws GroupNotFoundException {
+    void deleteGroupByIdTestSuccess() {
         UUID groupId = UUID.fromString("15afa0c0-2fe3-47d9-916b-761e59b67caa");
         Mockito.when(groupRepository.findById(groupId)).thenReturn(Optional.of(Mockito.mock(Group.class)));
 
         assertDoesNotThrow(() -> groupService.deleteGroupById(groupId));
-        assertThat(groupService.deleteGroupById(groupId).getMessage())
-                .isEqualTo("The group was successfully removed.");
     }
 
     @Test
@@ -93,9 +91,9 @@ class GroupServiceTest {
         group.setName("Test group");
         group.setId(groupId);
         Mockito.when(groupRepository.findById(groupId)).thenReturn(Optional.of(group));
+        Mockito.when(groupRepository.save(Mockito.any())).thenReturn(group);
 
-        assertThat(groupService.updateGroupById(groupId, groupDto).getMessage())
-                .isEqualTo("The group with the specified ID was successfully updated.");
+        assertThat(groupService.updateGroupById(groupId, groupDto).getName()).isNotBlank();
     }
 
     @Test

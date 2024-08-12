@@ -19,7 +19,7 @@
 Для запуска локального сервера Sonarqube внутри запущенного докера необходимо перейти в корневую директорию проекта и 
 ввести команду:
 ```bash
-docker-compose -f sonarqube-server.yml up -d
+docker-compose -f ./docker/docker-compose.yml up -d
 ```
 
 ---
@@ -41,10 +41,18 @@ minikube addons enable ingress
 суперпользователя **root**, а также следующие команды:
 ```bash
 cd ../
-mkdir postgresql-storage-feature
-mkdir postgresql-storage-dev
-mkdir postgresql-storage-preprod
-mkdir postgresql-storage-prod
+mkdir -p user-service/postgresql-storage-default
+mkdir -p user-service/postgresql-storage-feature
+mkdir -p user-service/postgresql-storage-dev
+mkdir -p user-service/postgresql-storage-preprod
+mkdir -p user-service/postgresql-storage-prod
+mkdir -p user-service/postgresql-storage-test
+mkdir -p user-service/minio-storage-default
+mkdir -p user-service/minio-storage-feature
+mkdir -p user-service/minio-storage-dev
+mkdir -p user-service/minio-storage-preprod
+mkdir -p user-service/minio-storage-prod
+mkdir -p user-service/minio-storage-test
 ```
 
 4. На локальной хост-машине ввести следующие команды для создания пространства имен для каждой из сред:
@@ -53,6 +61,7 @@ kubectl create namespace feauture
 kubectl create namespace dev
 kubectl create namespace preprod
 kubectl create namespace prod
+kubectl create namespace test
 ```
 
 5. На локальной хост-машине для каждой среды создать **secret**, хранящий настройки подключения к приватному хранилищу 
@@ -98,6 +107,10 @@ kubectl create secret docker-registry private-docker-registry `
     ```   
 
 3. Собрать docker-образ микросервиса для интересующего стенда:
+    - Для пространства по умолчанию (default)
+      ```bash
+      docker build -t euchekavelo/backend-user-service:latest-default .
+      ```
     - Для стенда **feature**
       ```bash
       docker build -t euchekavelo/backend-user-service:latest-feature .
@@ -110,28 +123,57 @@ kubectl create secret docker-registry private-docker-registry `
       ```bash
       docker build -t euchekavelo/backend-user-service:latest-preprod .
       ```    
+    - Для стенда **prod**
+      ```bash
+      docker build -t euchekavelo/backend-user-service:latest-prod .
+      ```  
+    - Для стенда **test**
+      ```bash
+      docker build -t euchekavelo/backend-user-service:latest-test .
+      ```
 
 4. Внутри корневой папки проекта перейти в директорию **chart** и выполнить ряд команд:
+   - Для развертывания chart-файла на **default**-неймспейсе:
+      ```bash
+      helm upgrade --install backend-user-service ./backend-user-service
+      ```
    - Для развертывания chart-файла на **feature**-неймспейсе: 
-        ```bash
-        helm upgrade --install backend-user-service-feature ./backend-user-service -f ./backend-user-service/values-feature.yml
-        ```
+      ```bash
+      helm upgrade --install backend-user-service-feature ./backend-user-service -f ./backend-user-service/values-feature.yml
+      ```
    - Для развертывания chart-файла на **dev**-неймспейсе:
-        ```bash
-        helm upgrade --install backend-user-service-dev ./backend-user-service -f ./backend-user-service/values-dev.yml
-        ```
+      ```bash
+      helm upgrade --install backend-user-service-dev ./backend-user-service -f ./backend-user-service/values-dev.yml
+      ```
    - Для развертывания chart-файла на **preprod**-неймспейсе:
+      ```bash
+      helm upgrade --install backend-user-service-preprod ./backend-user-service -f ./backend-user-service/values-preprod.yml
+      ```
+   - Для развертывания chart-файла на **prod**-неймспейсе:
         ```bash
-        helm upgrade --install backend-user-service-preprod ./backend-user-service -f ./backend-user-service/values-preprod.yml
+        helm upgrade --install backend-user-service-prod ./backend-user-service -f ./backend-user-service/values-prod.yml
         ```
+   - Для развертывания chart-файла на **test**-неймспейсе:
+        ```bash
+        helm upgrade --install backend-user-service-test ./backend-user-service -f ./backend-user-service/values-test.yml
+        ```
+---
+
+
+### Общее для обоих способов деплоя
+После развертывания комплекса приложений по любому из способов необходимо у себя
+в системе отредактировать файл **hosts**, указав имена хостов и соответствующие выделенные внешние
+ip-адреса ingress'ов каждого контура.
+<br>Наименования хостов для каждой из сред можно посмотреть в соответствующих yml-файлах с префиксом ***values***.
+Данные файлы расположены в папке **chart/backend-user-service** корневой директории проета.
 
 ---
 
 
-### Общее для обоих способов деплоя    
-После развертывания приложения по любому из способов необходимо у себя в системе отредактировать файл hosts, указав имена хостов и соответствующие выделенные внешние 
-ip-адреса ingress'ов каждого контура.
-<br>Наименования хостов для каждой из сред можно посмотреть в соответствующих файлах: *values-feature.yml*, *values-dev.yml* 
-и *values-preprod.yml*.
+### Настройка подключения к S3-хранилищу для микросервиса
+После успешного развертывания комплекса приложений необходимо зайти в MiniO через веб-интерфейс и создать корзину **users**,
+сделай ее публичной, а также сгенерировать ключи для пользования API сервера хранилища.
+<br>Значения соответствующих ключей необходимо установить в развернутом объекте ConfigMap. После чего потребуется
+перезагрузить Pod микросервиса для применения внесенных изменений.
 
 ---

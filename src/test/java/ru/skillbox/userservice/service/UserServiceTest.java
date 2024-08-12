@@ -7,15 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.skillbox.userservice.config.ConfigUserService;
-import ru.skillbox.userservice.dto.response.ResponseDto;
 import ru.skillbox.userservice.dto.ShortUserDto;
 import ru.skillbox.userservice.dto.UserDto;
 import ru.skillbox.userservice.dto.UserSubscriptionDto;
 import ru.skillbox.userservice.dto.response.UserResponseDto;
 import ru.skillbox.userservice.exception.*;
-import ru.skillbox.userservice.mapper.GroupMapper;
-import ru.skillbox.userservice.mapper.TownMapper;
-import ru.skillbox.userservice.mapper.UserMapper;
 import ru.skillbox.userservice.model.*;
 import ru.skillbox.userservice.model.enums.Sex;
 import ru.skillbox.userservice.repository.*;
@@ -49,15 +45,6 @@ class UserServiceTest {
     @Autowired
     private UserGroupRepository userGroupRepository;
 
-    @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private GroupMapper groupMapper;
-
-    @Autowired
-    private TownMapper townMapper;
-
     @Test
     void createUserTestSuccess() {
         User savedUser = new User();
@@ -71,9 +58,9 @@ class UserServiceTest {
         shortUserDto.setFullname("Ivanov Ivan Ivanovich");
         shortUserDto.setEmail("invanov_test@gmail.com");
         shortUserDto.setSex("MALE");
-        ResponseDto responseDto = userService.createUser(shortUserDto);
+        UserResponseDto userResponseDto = userService.createUser(shortUserDto);
 
-        assertThat(responseDto.getMessage()).isEqualTo("User successfully created.");
+        assertThat(userResponseDto.getId()).isNotNull();
     }
 
     @Test
@@ -119,14 +106,24 @@ class UserServiceTest {
         user.setSex(Sex.MALE);
         Optional<User> optionalUser = Optional.of(user);
 
+        User updatedUser = new User();
+        updatedUser.setId(userId);
+        updatedUser.setEmail(userDto.getEmail());
+        updatedUser.setFullname(userDto.getFullname());
+        updatedUser.setSex(Sex.valueOf(userDto.getSex()));
+        updatedUser.setBirthDate(userDto.getBirthDate());
+        updatedUser.setPhone(userDto.getPhone());
+
         Town town = new Town();
         town.setName("Moscow");
         Optional<Town> optionalTown = Optional.of(town);
+
         Mockito.when(userRepository.findById(userId)).thenReturn(optionalUser);
         Mockito.when(townRepository.findById(townId)).thenReturn(optionalTown);
+        Mockito.when(userRepository.save(Mockito.any())).thenReturn(updatedUser);
 
-        assertThat(userService.updateUserById(userId, userDto).getMessage())
-                .isEqualTo("The user was successfully updated.");
+        assertThat(userService.updateUserById(userId, userDto).getEmail())
+                .isEqualTo("invanov_test@gmail.com");
     }
 
     @Test

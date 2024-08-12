@@ -1,7 +1,6 @@
 package ru.skillbox.userservice.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -49,6 +48,8 @@ public class User {
     @JsonManagedReference
     private List<UserGroup> userGroupList = new ArrayList<>();
 
-    @JsonIgnore
-    private boolean deleted;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "photo_id", referencedColumnName = "id")
+    @JsonBackReference
+    private Photo photo;
 }
