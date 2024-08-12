@@ -6,17 +6,16 @@ import ru.skillbox.userservice.dto.response.ResponseDto;
 import ru.skillbox.userservice.dto.UserSubscriptionDto;
 import ru.skillbox.userservice.dto.response.UserResponseDto;
 import ru.skillbox.userservice.exception.*;
-import ru.skillbox.userservice.model.User;
 
 import java.util.UUID;
 
 public interface UserService {
 
-    ResponseDto createUser(ShortUserDto shortUserDto);
+    UserResponseDto createUser(ShortUserDto shortUserDto);
 
     UserResponseDto getUserById(UUID id) throws UserNotFoundException;
 
-    ResponseDto updateUserById(UUID id, UserDto userDto) throws UserNotFoundException, TownNotFoundException;
+    UserResponseDto updateUserById(UUID id, UserDto userDto) throws UserNotFoundException, TownNotFoundException;
 
     ResponseDto deleteUserById(UUID id) throws UserNotFoundException;
 

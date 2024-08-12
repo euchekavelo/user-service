@@ -1,7 +1,6 @@
 package ru.skillbox.userservice.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -24,7 +23,4 @@ public class UserGroup {
     @JoinColumn(name = "group_id")
     @JsonBackReference
     private Group group;
-
-    @JsonIgnore
-    private boolean deleted;
 }

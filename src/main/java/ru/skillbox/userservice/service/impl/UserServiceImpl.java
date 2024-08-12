@@ -1,5 +1,8 @@
 package ru.skillbox.userservice.service.impl;
 
+import io.micrometer.observation.annotation.Observed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.skillbox.userservice.dto.ShortUserDto;
@@ -19,6 +22,7 @@ import java.util.UUID;
 
 import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
 
+@Observed
 @Service
  public class UserServiceImpl implements UserService {
 
@@ -28,6 +32,7 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
     private final GroupRepository groupRepository;
     private final UserGroupRepository userGroupRepository;
     private final UserMapper userMapper;
+    private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, TownRepository townRepository,
@@ -43,20 +48,21 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
     }
 
     @Override
-    public ResponseDto createUser(ShortUserDto shortUserDto) {
+    public UserResponseDto createUser(ShortUserDto shortUserDto) {
         User user = new User();
         user.setFullname(shortUserDto.getFullname());
         user.setEmail(shortUserDto.getEmail());
         user.setSex(Sex.valueOf(shortUserDto.getSex()));
         User savedUser = userRepository.save(user);
 
-        return getResponseDto("User successfully created.", savedUser.getId());
+        return userMapper.userToUserResponseDto(savedUser);
     }
 
     @Override
     public UserResponseDto getUserById(UUID id) throws UserNotFoundException {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
+            logger.error(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
             throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
@@ -64,14 +70,16 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
     }
 
     @Override
-    public ResponseDto updateUserById(UUID id, UserDto userDto) throws UserNotFoundException, TownNotFoundException {
+    public UserResponseDto updateUserById(UUID id, UserDto userDto) throws UserNotFoundException, TownNotFoundException {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
+            logger.error(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
             throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         Optional<Town> optionalTown = townRepository.findById(userDto.getTownId());
         if (optionalTown.isEmpty()) {
+            logger.error(TOWN_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
             throw new TownNotFoundException(TOWN_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
@@ -82,15 +90,20 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
         user.setBirthDate(userDto.getBirthDate());
         user.setPhone(userDto.getPhone());
         user.setTown(optionalTown.get());
-        userRepository.save(user);
+        User updatedUser = userRepository.save(user);
 
-        return getResponseDto("The user was successfully updated.", null);
+        //
+        String s;
+        //
+
+        return userMapper.userToUserResponseDto(updatedUser);
     }
 
     @Override
     public ResponseDto deleteUserById(UUID id) throws UserNotFoundException {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
+            logger.error(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
             throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
@@ -104,17 +117,20 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
             UserNotFoundException {
 
         if (userSubscriptionDto.getSourceUserId().equals(userSubscriptionDto.getDestinationUserId())) {
-            throw new UserSubscriptionException("The user cannot subscribe to himself.");
+            logger.error(USER_SUBSCRIPTION_EXCEPTION_MESSAGE.getExceptionMessage());
+            throw new UserSubscriptionException(USER_SUBSCRIPTION_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         Optional<User> optionalSourceUser = userRepository.findById(userSubscriptionDto.getSourceUserId());
         if (optionalSourceUser.isEmpty()) {
-            throw new UserNotFoundException("The source user with the specified ID was not found.");
+            logger.error(SOURCE_USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
+            throw new UserNotFoundException(SOURCE_USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         Optional<User> optionalDestinationUser = userRepository.findById(userSubscriptionDto.getDestinationUserId());
         if (optionalDestinationUser.isEmpty()) {
-            throw new UserNotFoundException("The destination user with the specified ID was not found.");
+            logger.error(DESTINATION_USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
+            throw new UserNotFoundException(DESTINATION_USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         UserSubscriptionKey userSubscriptionKey = new UserSubscriptionKey();
@@ -123,7 +139,8 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
 
         Optional<UserSubscription> optionalUserSubscription = userSubscriptionRepository.findById(userSubscriptionKey);
         if (optionalUserSubscription.isPresent()) {
-            throw new UserSubscriptionException("A subscription to the destination user already exists.");
+            logger.error(USER_SUBSCRIPTION_ALREADY_EXISTS_EXCEPTION_MESSAGE.getExceptionMessage());
+            throw new UserSubscriptionException(USER_SUBSCRIPTION_ALREADY_EXISTS_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         UserSubscription userSubscription = new UserSubscription();
@@ -138,7 +155,8 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
     @Override
     public ResponseDto unsubscribeFromUser(UserSubscriptionDto userSubscriptionDto) throws UserSubscriptionException {
         if (userSubscriptionDto.getSourceUserId().equals(userSubscriptionDto.getDestinationUserId())) {
-            throw new UserSubscriptionException("The user cannot unsubscribe to himself.");
+            logger.error(USER_UNSUBSCRIBE_HIMSELF_EXCEPTION_MESSAGE.getExceptionMessage());
+            throw new UserSubscriptionException(USER_UNSUBSCRIBE_HIMSELF_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         UserSubscriptionKey userSubscriptionKey = new UserSubscriptionKey();
@@ -147,7 +165,8 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
 
         Optional<UserSubscription> optionalUserSubscription = userSubscriptionRepository.findById(userSubscriptionKey);
         if (optionalUserSubscription.isEmpty()) {
-            throw new UserSubscriptionException("No subscription has been identified in relation to the destination user.");
+            logger.error(USER_SUBSCRIPTION_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
+            throw new UserSubscriptionException(USER_SUBSCRIPTION_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         userSubscriptionRepository.delete(optionalUserSubscription.get());
@@ -159,11 +178,13 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
     public ResponseDto addUserToGroup(UUID userId, UUID groupId) throws UserNotFoundException, GroupNotFoundException {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
+            logger.error(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
             throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         Optional<Group> optionalGroup = groupRepository.findById(groupId);
         if (optionalGroup.isEmpty()) {
+            logger.error(GROUP_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
             throw new GroupNotFoundException(GROUP_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
@@ -188,7 +209,8 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
 
         Optional<UserGroup> optionalUserGroup = userGroupRepository.findById(userGroupKey);
         if (optionalUserGroup.isEmpty()) {
-            throw new UserGroupNotFoundException("Cannot remove a user from a group.");
+            logger.error(IMPOSSIBLE_REMOVING_USER_GROUP_EXCEPTION_MESSAGE.getExceptionMessage());
+            throw new UserGroupNotFoundException(IMPOSSIBLE_REMOVING_USER_GROUP_EXCEPTION_MESSAGE.getExceptionMessage());
         }
 
         userGroupRepository.delete(optionalUserGroup.get());

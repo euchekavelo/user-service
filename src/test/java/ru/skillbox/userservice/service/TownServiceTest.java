@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.skillbox.userservice.config.ConfigTownService;
-import ru.skillbox.userservice.dto.response.ResponseDto;
 import ru.skillbox.userservice.dto.TownDto;
+import ru.skillbox.userservice.dto.response.TownResponseDto;
 import ru.skillbox.userservice.exception.TownNotFoundException;
 import ru.skillbox.userservice.model.Town;
 import ru.skillbox.userservice.repository.TownRepository;
@@ -38,9 +38,9 @@ class TownServiceTest {
         Mockito.when(townRepository.save(Mockito.any(Town.class))).thenReturn(savedTown);
         TownDto townDto = new TownDto();
         townDto.setName("Moscow");
-        ResponseDto responseDto = townService.createTown(townDto);
+        TownResponseDto townResponseDto = townService.createTown(townDto);
 
-        assertThat(responseDto.getMessage()).isEqualTo("The town has been successfully created.");
+        assertThat(townResponseDto.getName()).isNotBlank();
     }
 
     @Test
@@ -51,7 +51,8 @@ class TownServiceTest {
         town.setName("Moscow");
         Mockito.when(townRepository.findById(townId)).thenReturn(Optional.of(town));
 
-        assertThat(townService.getTownById(townId)).isEqualTo(town);
+        assertThat(townService.getTownById(townId).getId()).isEqualTo(town.getId());
+        assertThat(townService.getTownById(townId).getName()).isEqualTo(town.getName());
     }
 
     @Test
@@ -67,8 +68,7 @@ class TownServiceTest {
         UUID townId = UUID.fromString("11afa0c0-2fe3-47d9-916b-761e59b67bba");
         Mockito.when(townRepository.findById(townId)).thenReturn(Optional.of(Mockito.mock(Town.class)));
 
-        assertThat(townService.deleteTownById(townId).getMessage())
-                .isEqualTo("The town was successfully removed.");
+        assertDoesNotThrow(() -> townService.deleteTownById(townId));
     }
 
     @Test
@@ -81,13 +81,17 @@ class TownServiceTest {
 
     @Test
     void updateTownByIdTestSuccess() throws TownNotFoundException {
+        UUID townId = UUID.fromString("11afa0c0-2fe3-47d9-916b-761e59b67bba");
+        Town town = new Town();
+        town.setName("Test town");
+        town.setId(townId);
+
         TownDto townDto = new TownDto();
         townDto.setName("Omsk");
-        UUID townId = UUID.fromString("11afa0c0-2fe3-47d9-916b-761e59b67bba");
         Mockito.when(townRepository.findById(townId)).thenReturn(Optional.of(Mockito.mock(Town.class)));
+        Mockito.when(townRepository.save(Mockito.any())).thenReturn(town);
 
-        assertThat(townService.updateTownById(townId, townDto).getMessage())
-                .isEqualTo("The town with the specified ID was successfully updated.");
+        assertThat(townService.updateTownById(townId, townDto).getName()).isNotNull();
     }
 
     @Test

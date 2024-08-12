@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.skillbox.userservice.dto.response.ResponseDto;
 import ru.skillbox.userservice.exception.*;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 @ControllerAdvice
@@ -15,7 +16,8 @@ public class ExceptionHandlerControllerAdvice {
 
     private static final String UNIQUE_VIOLATION_STATE = "23505";
 
-    @ExceptionHandler({UserSubscriptionException.class, MethodArgumentNotValidException.class})
+    @ExceptionHandler({UserSubscriptionException.class, MethodArgumentNotValidException.class,
+            IncorrectFileFormatException.class, IncorrectFileContentException.class, IOException.class})
     public ResponseEntity<ResponseDto> handleException(Exception ex) {
         return ResponseEntity.badRequest().body(getResponseDto(ex.getMessage()));
     }
@@ -30,7 +32,7 @@ public class ExceptionHandlerControllerAdvice {
     }
 
     @ExceptionHandler({UserNotFoundException.class, TownNotFoundException.class, GroupNotFoundException.class,
-            UserGroupNotFoundException.class})
+            UserGroupNotFoundException.class, PhotoNotFoundException.class})
     public ResponseEntity<ResponseDto> handleNotFoundException(Exception ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getResponseDto(ex.getMessage()));
     }

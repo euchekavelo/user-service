@@ -19,5 +19,6 @@ public class UserResponseDto {
     private Sex sex;
     private List<UserSubscriptionResponseDto> subscriptions;
     private List<UserSubscriptionResponseDto> subscribers;
-    private List<GroupResponseDto> userGroupList;
+    private List<GroupResponseDto> groups;
+    private UserPhotoResponseDto photo;
 }

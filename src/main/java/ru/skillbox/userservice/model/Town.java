@@ -1,6 +1,5 @@
 package ru.skillbox.userservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,7 +20,4 @@ public class Town {
     @OneToMany(mappedBy = "town", cascade = CascadeType.MERGE)
     @JsonManagedReference
     private List<User> userList = new ArrayList<>();
-
-    @JsonIgnore
-    private boolean deleted;
 }

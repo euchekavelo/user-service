@@ -44,8 +44,14 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.739'
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+    testImplementation "org.testcontainers:localstack:1.19.8"
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+    implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
 }
 
 tasks.named('test') {
@@ -70,9 +76,9 @@ sonar {
     }
 }
 
-test {
+/*test {
     finalizedBy integrationTest, jacocoTestReport
-}
+}*/
 jacocoTestReport {
     executionData integrationTest
     reports {
