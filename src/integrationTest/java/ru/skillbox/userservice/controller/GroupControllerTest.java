@@ -72,10 +72,7 @@ class GroupControllerTest {
         UUID groupId = getNewGroupIdFromDatabase(groupDto);
 
         mockMvc.perform(delete("/groups/" + groupId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").doesNotExist())
-                .andExpect(jsonPath("message").value("The group was successfully removed."))
-                .andExpect(jsonPath("result").value(true))
+                .andExpect(status().isNoContent())
                 .andDo(print());
     }
 
@@ -105,10 +102,6 @@ class GroupControllerTest {
                         .content(objectMapper.writeValueAsString(newGroupDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id").doesNotExist())
-                .andExpect(jsonPath("message")
-                        .value("The group with the specified ID was successfully updated."))
-                .andExpect(jsonPath("result").value(true))
                 .andDo(print());
     }
 

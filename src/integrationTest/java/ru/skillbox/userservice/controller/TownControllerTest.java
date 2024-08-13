@@ -81,9 +81,7 @@ class TownControllerTest {
         UUID townId = getNewTownIdFromDatabase(townDto);
 
         mockMvc.perform(delete("/towns/" + townId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").doesNotExist())
-                .andExpect(jsonPath("message").value("The town was successfully removed."))
+                .andExpect(status().isNoContent())
                 .andDo(print());
     }
 
@@ -100,9 +98,6 @@ class TownControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newTownDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id").doesNotExist())
-                .andExpect(jsonPath("message")
-                        .value("The town with the specified ID was successfully updated."))
                 .andDo(print());
     }
 
