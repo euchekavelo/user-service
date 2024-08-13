@@ -194,7 +194,7 @@ public class PhotoServiceTest {
         assertThrows(HibernateException.class, () -> photoService.deleteUserPhotoById(userId, photoId));
     }
 
-    private static MultipartFile getMockMultipartFile(File file) throws IOException {
+    private MultipartFile getMockMultipartFile(File file) throws IOException {
         try (InputStream inputStream = new FileInputStream(file)) {
             String contentType = MediaTypeFactory.getMediaType(file.getName()).toString();
 

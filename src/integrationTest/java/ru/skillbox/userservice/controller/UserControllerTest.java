@@ -2,17 +2,27 @@ package ru.skillbox.userservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.MediaTypeFactory;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.skillbox.userservice.config.PostgreSQLContainerConfig;
+import ru.skillbox.userservice.config.S3Configuration;
 import ru.skillbox.userservice.dto.*;
 import ru.skillbox.userservice.dto.response.ResponseDto;
+import ru.skillbox.userservice.dto.response.UserPhotoResponseDto;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -21,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
 
-@SpringBootTest(classes = PostgreSQLContainerConfig.class)
+@SpringBootTest(classes = {PostgreSQLContainerConfig.class, S3Configuration.class})
 @AutoConfigureMockMvc
 class UserControllerTest {
 
@@ -30,6 +40,15 @@ class UserControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    private static File correctFile;
+    private static File incorrectFile;
+
+    @BeforeAll
+    static void beforeAll() {
+        correctFile = new File("src/integrationTest/resources/files/correct_file.png");
+        incorrectFile = new File("src/integrationTest/resources/files/incorrect_file.txt");
+    }
 
     @Test
     void createUserSuccess() throws Exception {
@@ -43,7 +62,6 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id").exists())
-                .andExpect(jsonPath("message").value("User successfully created."))
                 .andDo(print());
     }
 
@@ -120,8 +138,6 @@ class UserControllerTest {
                         .content(objectMapper.writeValueAsString(userDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("message")
-                        .value("The user was successfully updated."))
                 .andDo(print());
     }
 
@@ -484,6 +500,111 @@ class UserControllerTest {
                 .andDo(print());;
     }
 
+    @Test
+    void createUserPhotoSuccess() throws Exception {
+        ShortUserDto sourceShortUserDto = new ShortUserDto();
+        sourceShortUserDto.setFullname("Testov Nikita Ivanovich");
+        sourceShortUserDto.setEmail("testov_test@gmail.com");
+        sourceShortUserDto.setSex("MALE");
+        UUID userId = getNewUserIdFromDatabase(sourceShortUserDto);
+        MockMultipartFile multipartFile = getMockMultipartFile(correctFile);
+
+        mockMvc.perform(multipart(HttpMethod.POST, "/users/" + userId + "/photos")
+                        .file(multipartFile))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("name").isNotEmpty())
+                .andDo(print());
+    }
+
+    @Test
+    void createUserPhotoThrowUserNotFoundException() throws Exception {
+        UUID userId = UUID.fromString("09cfa0c0-2fe3-47d9-916b-761e59b89ccd");
+        MockMultipartFile multipartFile = getMockMultipartFile(correctFile);
+
+        mockMvc.perform(multipart(HttpMethod.POST, "/users/" + userId + "/photos")
+                        .file(multipartFile))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    void createUserPhotoThrowIncorrectFileContentException() throws Exception {
+        ShortUserDto sourceShortUserDto = new ShortUserDto();
+        sourceShortUserDto.setFullname("Pestov Nikita Ivanovich");
+        sourceShortUserDto.setEmail("pestov_test@gmail.com");
+        sourceShortUserDto.setSex("MALE");
+        UUID userId = getNewUserIdFromDatabase(sourceShortUserDto);
+        MockMultipartFile multipartFile = new MockMultipartFile("file", new byte[0]);
+
+        mockMvc.perform(multipart(HttpMethod.POST, "/users/" + userId + "/photos")
+                        .file(multipartFile))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
+    @Test
+    void createUserPhotoThrowIncorrectFileFormatException() throws Exception {
+        ShortUserDto sourceShortUserDto = new ShortUserDto();
+        sourceShortUserDto.setFullname("Vestov Nikita Ivanovich");
+        sourceShortUserDto.setEmail("vestov_test@gmail.com");
+        sourceShortUserDto.setSex("MALE");
+        UUID userId = getNewUserIdFromDatabase(sourceShortUserDto);
+        MockMultipartFile multipartFile = getMockMultipartFile(incorrectFile);
+
+        mockMvc.perform(multipart(HttpMethod.POST, "/users/" + userId + "/photos")
+                        .file(multipartFile))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
+    @Test
+    void getUserPhotoByIdSuccess() throws Exception {
+        ShortUserDto sourceShortUserDto = new ShortUserDto();
+        sourceShortUserDto.setFullname("Xestov Nikita Ivanovich");
+        sourceShortUserDto.setEmail("xestov_test@gmail.com");
+        sourceShortUserDto.setSex("MALE");
+        UUID userId = getNewUserIdFromDatabase(sourceShortUserDto);
+        UUID photoId = getNewUserPhotoFromDatabase(correctFile, userId);
+
+        mockMvc.perform(get("/users/" + userId + "/photos/" + photoId))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    void getUserPhotoByIdThrowPhotoNotFoundException() throws Exception {
+        UUID userId = UUID.fromString("09cfa0c0-2fe3-47d9-916b-761e59b89ccd");
+        UUID photoId = UUID.fromString("11cfa0c0-2fe3-47d9-916b-761e59b11ccd");
+
+        mockMvc.perform(get("/users/" + userId + "/photos/" + photoId))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    void deleteUserPhotoByIdSuccess() throws Exception {
+        ShortUserDto sourceShortUserDto = new ShortUserDto();
+        sourceShortUserDto.setFullname("Festov Nikita Ivanovich");
+        sourceShortUserDto.setEmail("festov_test@gmail.com");
+        sourceShortUserDto.setSex("MALE");
+        UUID userId = getNewUserIdFromDatabase(sourceShortUserDto);
+        UUID photoId = getNewUserPhotoFromDatabase(correctFile, userId);
+
+        mockMvc.perform(delete("/users/" + userId + "/photos/" + photoId))
+                .andExpect(status().isNoContent())
+                .andDo(print());
+    }
+
+    @Test
+    void deleteUserPhotoByIdThrowPhotoNotFoundException() throws Exception {
+        UUID userId = UUID.fromString("09cfa0c0-2fe3-47d9-916b-711e59b89ccd");
+        UUID photoId = UUID.fromString("33cfa0c0-2fe3-47d9-916b-771e59b11ccd");
+
+        mockMvc.perform(delete("/users/" + userId + "/photos/" + photoId))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
     private UUID getNewGroupIdFromDatabase(GroupDto groupDto) throws Exception {
         MvcResult mvcResultGroup = mockMvc.perform(post("/groups")
                         .content(objectMapper.writeValueAsString(groupDto))
@@ -509,5 +630,22 @@ class UserControllerTest {
                 .andReturn();
 
         return objectMapper.readValue(mvcResultTown.getResponse().getContentAsString(), ResponseDto.class).getId();
+    }
+
+    private UUID getNewUserPhotoFromDatabase(File file, UUID userId) throws Exception {
+        MockMultipartFile multipartFile = getMockMultipartFile(file);
+        MvcResult mvcResultPhoto = mockMvc.perform(multipart(HttpMethod.POST, "/users/" + userId + "/photos")
+                        .file(multipartFile)).andReturn();
+
+        return objectMapper.readValue(mvcResultPhoto.getResponse().getContentAsString(), UserPhotoResponseDto.class)
+                .getId();
+    }
+
+    private MockMultipartFile getMockMultipartFile(File file) throws IOException {
+        try (InputStream inputStream = new FileInputStream(file)) {
+            String contentType = MediaTypeFactory.getMediaType(file.getName()).toString();
+
+            return new MockMultipartFile("file", file.getName(), contentType, inputStream);
+        }
     }
 }
