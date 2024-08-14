@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
@@ -179,8 +180,7 @@ class UserServiceTest {
         Optional<User> optionalUser = Optional.of(user);
         Mockito.when(userRepository.findById(userId)).thenReturn(optionalUser);
 
-        assertThat(userService.deleteUserById(userId).getMessage())
-                .isEqualTo("The user with the specified ID was successfully deleted.");
+        assertDoesNotThrow(() -> userService.deleteUserById(userId));
     }
 
     @Test

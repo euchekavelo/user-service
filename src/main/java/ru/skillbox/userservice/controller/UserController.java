@@ -2,6 +2,7 @@ package ru.skillbox.userservice.controller;
 
 import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -73,7 +74,9 @@ public class UserController {
             })
     })
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDto> getUserById(@PathVariable UUID id) throws UserNotFoundException {
+    public ResponseEntity<UserResponseDto> getUserById(@Parameter(description = "ID пользователя.") @PathVariable UUID id)
+            throws UserNotFoundException {
+
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
@@ -94,7 +97,8 @@ public class UserController {
             })
     })
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDto> updateUserById(@PathVariable UUID id, @Valid @RequestBody UserDto userDto)
+    public ResponseEntity<UserResponseDto> updateUserById(@Parameter(description = "ID пользователя.")
+                                                          @PathVariable UUID id, @Valid @RequestBody UserDto userDto)
             throws UserNotFoundException, TownNotFoundException {
 
         return ResponseEntity.ok(userService.updateUserById(id, userDto));
@@ -103,9 +107,7 @@ public class UserController {
     @Observed(contextualName = "Tracing deleteUserById method controller")
     @Operation(summary = "Удалить пользователя.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class))
-            }),
+            @ApiResponse(responseCode = "204"),
             @ApiResponse(responseCode = "404", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class))
             }),
@@ -114,8 +116,12 @@ public class UserController {
             })
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDto> deleteUserById(@PathVariable UUID id) throws UserNotFoundException {
-        return ResponseEntity.ok(userService.deleteUserById(id));
+    public ResponseEntity<Void> deleteUserById(@Parameter(description = "ID пользователя.") @PathVariable UUID id)
+            throws UserNotFoundException {
+
+        userService.deleteUserById(id);
+
+        return ResponseEntity.noContent().build();
     }
 
     @Observed(contextualName = "Tracing subscribeToUser method controller")
@@ -142,7 +148,7 @@ public class UserController {
     }
 
     @Observed(contextualName = "Tracing unsubscribeFromUser method controller")
-    @Operation(summary = "Удалить подписку между пользователями.")
+    @Operation(summary = "Отменить подписку между пользователями.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class))
@@ -175,7 +181,10 @@ public class UserController {
             })
     })
     @PostMapping("/{userId}/groups/{groupId}")
-    public ResponseEntity<ResponseDto> addUserToGroup(@PathVariable UUID userId, @PathVariable UUID groupId)
+    public ResponseEntity<ResponseDto> addUserToGroup(@Parameter(description = "ID пользователя.")
+                                                      @PathVariable UUID userId,
+                                                      @Parameter(description = "ID группы.")
+                                                      @PathVariable UUID groupId)
             throws UserNotFoundException, GroupNotFoundException {
 
         return ResponseEntity.ok(userService.addUserToGroup(userId, groupId));
@@ -195,7 +204,10 @@ public class UserController {
             })
     })
     @DeleteMapping("/{userId}/groups/{groupId}")
-    public ResponseEntity<ResponseDto> deleteUserFromGroup(@PathVariable UUID userId, @PathVariable UUID groupId)
+    public ResponseEntity<ResponseDto> deleteUserFromGroup(@Parameter(description = "ID пользователя.")
+                                                           @PathVariable UUID userId,
+                                                           @Parameter(description = "ID группы.")
+                                                           @PathVariable UUID groupId)
             throws UserGroupNotFoundException {
 
         return ResponseEntity.ok(userService.deleteUserFromGroup(userId, groupId));
@@ -218,7 +230,10 @@ public class UserController {
             })
     })
     @PostMapping(value = "/{userId}/photos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<UserPhotoResponseDto> createUserPhoto(@PathVariable UUID userId, MultipartFile file)
+    public ResponseEntity<UserPhotoResponseDto> createUserPhoto(@Parameter(description = "ID пользователя.")
+                                                                @PathVariable UUID userId,
+                                                                @Parameter(description = "Файл для зугрузки.")
+                                                                MultipartFile file)
             throws UserNotFoundException, IncorrectFileContentException, IncorrectFileFormatException, IOException {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(photoService.createUserPhoto(userId, file));
@@ -238,7 +253,10 @@ public class UserController {
             })
     })
     @GetMapping("/{userId}/photos/{photoId}")
-    public ResponseEntity<UserPhotoResponseDto> getUserPhotoById(@PathVariable UUID userId, @PathVariable UUID photoId)
+    public ResponseEntity<UserPhotoResponseDto> getUserPhotoById(@Parameter(description = "ID пользователя.")
+                                                                 @PathVariable UUID userId,
+                                                                 @Parameter(description = "ID фотографии.")
+                                                                 @PathVariable UUID photoId)
             throws PhotoNotFoundException {
 
         return ResponseEntity.ok(photoService.getUserPhotoById(userId, photoId));
@@ -259,7 +277,10 @@ public class UserController {
             })
     })
     @DeleteMapping("/{userId}/photos/{photoId}")
-    public ResponseEntity<Void> deleteUserPhotoById(@PathVariable UUID userId, @PathVariable UUID photoId)
+    public ResponseEntity<Void> deleteUserPhotoById(@Parameter(description = "ID пользователя.")
+                                                    @PathVariable UUID userId,
+                                                    @Parameter(description = "ID фотографии.")
+                                                    @PathVariable UUID photoId)
             throws PhotoNotFoundException, IOException {
 
         photoService.deleteUserPhotoById(userId, photoId);

@@ -203,9 +203,7 @@ class UserControllerTest {
 
         UUID userId = getNewUserIdFromDatabase(shortUserDto);
         mockMvc.perform(delete("/users/" + userId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("message")
-                        .value("The user with the specified ID was successfully deleted."))
+                .andExpect(status().isNoContent())
                 .andDo(print());
     }
 

@@ -76,9 +76,10 @@ sonar {
     }
 }
 
-/*test {
+test {
     finalizedBy integrationTest, jacocoTestReport
-}*/
+}
+
 jacocoTestReport {
     executionData integrationTest
     reports {
