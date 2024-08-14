@@ -92,15 +92,11 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
         user.setTown(optionalTown.get());
         User updatedUser = userRepository.save(user);
 
-        //
-        String s;
-        //
-
         return userMapper.userToUserResponseDto(updatedUser);
     }
 
     @Override
-    public ResponseDto deleteUserById(UUID id) throws UserNotFoundException {
+    public void deleteUserById(UUID id) throws UserNotFoundException {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
             logger.error(USER_NOT_FOUND_EXCEPTION_MESSAGE.getExceptionMessage());
@@ -108,8 +104,6 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
         }
 
         userRepository.delete(optionalUser.get());
-
-        return getResponseDto("The user with the specified ID was successfully deleted.", null);
     }
 
     @Override

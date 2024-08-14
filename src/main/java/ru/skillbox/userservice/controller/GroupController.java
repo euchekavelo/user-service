@@ -2,6 +2,7 @@ package ru.skillbox.userservice.controller;
 
 import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -64,7 +65,8 @@ public class GroupController {
             })
     })
     @GetMapping("/{id}")
-    public ResponseEntity<GroupResponseDto> getGroupById(@PathVariable UUID id) throws GroupNotFoundException {
+    public ResponseEntity<GroupResponseDto> getGroupById(@Parameter(description = "ID группы.")
+                                                         @PathVariable UUID id) throws GroupNotFoundException {
         return ResponseEntity.ok(groupService.getGroupById(id));
     }
 
@@ -80,7 +82,9 @@ public class GroupController {
             })
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGroupById(@PathVariable UUID id) throws GroupNotFoundException {
+    public ResponseEntity<Void> deleteGroupById(@Parameter(description = "ID группы.") @PathVariable UUID id)
+            throws GroupNotFoundException {
+
         groupService.deleteGroupById(id);
 
         return ResponseEntity.noContent().build();
@@ -103,7 +107,8 @@ public class GroupController {
             })
     })
     @PutMapping("/{id}")
-    public ResponseEntity<GroupResponseDto> updateGroupById(@PathVariable UUID id, @Valid @RequestBody GroupDto groupDto)
+    public ResponseEntity<GroupResponseDto> updateGroupById(@Parameter(description = "ID группы.") @PathVariable UUID id,
+                                                            @Valid @RequestBody GroupDto groupDto)
             throws GroupNotFoundException {
 
         return ResponseEntity.ok(groupService.updateGroupById(id, groupDto));

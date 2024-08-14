@@ -17,7 +17,7 @@ public interface UserService {
 
     UserResponseDto updateUserById(UUID id, UserDto userDto) throws UserNotFoundException, TownNotFoundException;
 
-    ResponseDto deleteUserById(UUID id) throws UserNotFoundException;
+    void deleteUserById(UUID id) throws UserNotFoundException;
 
     ResponseDto subscribeToUser(UserSubscriptionDto userSubscriptionDto) throws UserSubscriptionException,
             UserNotFoundException;

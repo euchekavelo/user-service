@@ -2,6 +2,7 @@ package ru.skillbox.userservice.controller;
 
 import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -64,7 +65,9 @@ public class TownController {
             })
     })
     @GetMapping("/{id}")
-    public ResponseEntity<TownResponseDto> getTownById(@PathVariable UUID id) throws TownNotFoundException {
+    public ResponseEntity<TownResponseDto> getTownById(@Parameter(description = "ID города.") @PathVariable UUID id)
+            throws TownNotFoundException {
+
         return ResponseEntity.ok(townService.getTownById(id));
     }
 
@@ -80,7 +83,9 @@ public class TownController {
             })
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTownById(@PathVariable UUID id) throws TownNotFoundException {
+    public ResponseEntity<Void> deleteTownById(@Parameter(description = "ID города.") @PathVariable UUID id)
+            throws TownNotFoundException {
+
         townService.deleteTownById(id);
 
         return ResponseEntity.noContent().build();
@@ -103,7 +108,8 @@ public class TownController {
             })
     })
     @PutMapping("/{id}")
-    public ResponseEntity<TownResponseDto> updateTownById(@PathVariable UUID id, @Valid @RequestBody TownDto townDto)
+    public ResponseEntity<TownResponseDto> updateTownById(@Parameter(description = "ID города.") @PathVariable UUID id,
+                                                          @Valid @RequestBody TownDto townDto)
             throws TownNotFoundException {
 
         return ResponseEntity.ok(townService.updateTownById(id, townDto));

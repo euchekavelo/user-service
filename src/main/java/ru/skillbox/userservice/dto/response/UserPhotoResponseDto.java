@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.util.UUID;
 
+@Schema(description = "Выходящий объект с информацией о фото.")
 @Data
 public class UserPhotoResponseDto {
 
