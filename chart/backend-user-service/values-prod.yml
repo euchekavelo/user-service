@@ -1,17 +1,34 @@
 namespace: &namespace prod
 
 database:
-  storagePath: /postgresql-storage-prod
+  storagePath: /user-service/postgresql-storage-prod
   service:
-    nodePort: 30033
+    nodePort: 30140
 
 
 backendUserService:
   image:
     version: latest-prod
   service:
-    nodePort: 30032
+    nodePort: 30141
+
+
+s3:
+  service:
+    ui:
+      nodePort: 30142
+    server:
+      nodePort: 30143
+  ingress:
+    host: user-service-minio-prod.local
+  volume:
+    storagePath: /user-service/minio-storage-prod
+
+
+zipkin:
+  service:
+    nodePort: 30144
 
 
 ingress:
-  host: userservice-prod.local
+  host: user-service-prod.local

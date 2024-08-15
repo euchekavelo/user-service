@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.database.deployment.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.database.label.app }}
+spec:
+  serviceName: {{ .Values.database.service.name }}
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.database.label.app }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.database.label.app }}
+    spec:
+      containers:
+        - name: {{ .Values.database.container.name }}
+          image: {{ .Values.database.image.name }}:{{ .Values.database.image.version }}
+          ports:
+              - containerPort: {{ .Values.database.container.port }}
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.database.username }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.database.password }}
+            - name: POSTGRES_DB
+              value: {{ .Values.database.name }}
+            - name: PGDATA
+              value: {{ .Values.database.storagePath }}
+          volumeMounts:
+            - name: postgres-data
+              mountPath: {{ .Values.database.storagePath }}
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+        namespace: {{ .Values.namespace }}
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 600Mi
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.database.service.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  type: NodePort
+  selector:
+    app: {{ .Values.database.label.app }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.database.service.port }}
+      targetPort: {{ .Values.database.container.port }}
+      nodePort: {{ .Values.database.service.nodePort }}
