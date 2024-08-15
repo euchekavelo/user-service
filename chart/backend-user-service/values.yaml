@@ -9,7 +9,7 @@ database:
   name: users
   username: postgre_user
   password: postgre_secret_password
-  storagePath: /postgresql-storage-default
+  storagePath: /user-service/postgresql-storage-default
   deployment:
     name: deployment-postgresql
     namespace: *namespace
@@ -51,6 +51,57 @@ backendUserService:
     prefixConnectionUrl: jdbc:postgresql
 
 
+s3:
+  label:
+    app: minio
+  service:
+    name: minio-service
+    ui:
+      port: 9001
+      nodePort: 30002
+    server:
+      port: 9000
+      nodePort: 30003
+  ingress:
+    name: minio-ingress
+    host: user-service-minio-default.local
+  statefulSet:
+    name: minio-statefulset
+    container:
+      name: minio-container
+      ui:
+        port: 9001
+      server:
+        port: 9000
+    image:
+      name: quay.io/minio/minio
+      version: latest
+  volume:
+    name: minio-pvc
+    storagePath: /user-service/minio-storage-default
+  minioRegion: ru-center
+  minioBucketName: users
+
+
+zipkin:
+  label:
+    app: zipkin-user-service
+  deployment:
+    name: deployment-zipkin-user-service
+    namespace: *namespace
+  replicas:
+    count: 1
+  container:
+    name: zipkin-user-service-container
+    port: 9411
+  image:
+    name: openzipkin/zipkin
+  service:
+    name: service-zipkin-user-service
+    port: 9411
+    nodePort: 30004
+
+
 ingress:
   name: backend-user-service-ingress
-  host: userservice-default.local
+  host: user-service-default.local

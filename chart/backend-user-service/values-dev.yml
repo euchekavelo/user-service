@@ -1,17 +1,34 @@
 namespace: &namespace dev
 
 database:
-  storagePath: /postgresql-storage-dev
+  storagePath: /user-service/postgresql-storage-dev
   service:
-    nodePort: 30001
+    nodePort: 30110
 
 
 backendUserService:
   image:
     version: latest-dev
   service:
-    nodePort: 30000
+    nodePort: 30111
+
+
+s3:
+  service:
+    ui:
+      nodePort: 30112
+    server:
+      nodePort: 30113
+  ingress:
+    host: user-service-minio-dev.local
+  volume:
+    storagePath: /user-service/minio-storage-dev
+
+
+zipkin:
+  service:
+    nodePort: 30114
 
 
 ingress:
-  host: userservice-dev.local
+  host: user-service-dev.local
