@@ -8,9 +8,9 @@ data:
   DATABASE_URL: {{ .Values.backendUserService.datasource.prefixConnectionUrl }}://{{ .Values.database.service.name }}:{{ .Values.database.service.port }}/{{ .Values.database.name }}
   DATABASE_USER: {{ .Values.database.username }}
   DATABASE_PASSWORD: {{ .Values.database.password }}
-  MINIO_ENDPOINT: { { .Values.s3.service.name } }:{{ .Values.s3.service.server.port }}
+  MINIO_ENDPOINT: {{ .Values.s3.service.name }}:{{ .Values.s3.service.server.port }}
   MINIO_ACCESS_KEY: ""
   MINIO_SECRET_KEY: ""
-  MINIO_REGION: { { .Values.s3.minioRegion } }
-  MINIO_BUCKET_NAME: { { .Values.s3.minioBucketName } }
+  MINIO_REGION: {{ .Values.s3.minioRegion }}
+  MINIO_BUCKET_NAME: {{ .Values.s3.minioBucketName }}
   ZIPKIN_TRACING_ENDPOINT: http://{{ .Values.zipkin.service.name }}:{{ .Values.zipkin.service.port }}/api/v2/spans
