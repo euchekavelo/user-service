@@ -14,3 +14,6 @@ data:
   MINIO_REGION: {{ .Values.s3.minioRegion }}
   MINIO_BUCKET_NAME: {{ .Values.s3.minioBucketName }}
   ZIPKIN_TRACING_ENDPOINT: http://{{ .Values.zipkin.service.name }}:{{ .Values.zipkin.service.port }}/api/v2/spans
+  KEY_STORE_FILE_PATH: /user-service/certs/keystore.p12
+  KEY_STORE_PASSWORD: useruser
+  KEY_STORE_ALIAS: localhost
