@@ -76,7 +76,44 @@ kubectl create secret docker-registry private-docker-registry `
 ```
 
 ---
+### Создание сертификата для работы микросервиса по HTTPS
+1. Создаем приватный ключ и корневой сертификат для собственного центра сертификации (CA):
+```bash
+openssl req -x509 -sha256 -days 365 -newkey rsa:2048 -keyout root_ca.key -out root_ca.crt
+```
+2. Создаем приватный ключ для микросервиса:
+```bash
+openssl genrsa -out user_service.key 2048
+```
+3. Создаем запрос на подпись сертификата для приватного ключа микросервиса:
+```bash
+openssl req -new -key user_service.key -out user_service.csr
+```
+4. Сформируем файл **user_service.ext** с расширениями сертификата, которые будут добавлены при подписании. В расширениях укажем, что полученный сертификат не является CA-сертификатом и не может использоваться для подписания других сертификатов, а также добавим альтернативные имена.<br>
+   Содержимое данного файла должно иметь следующий вид:
+```txt
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+subjectAltName=@alt_names
+[alt_names]
+DNS.1=<DNS имя микросервиса>
+IP.1=<IP-адрес микросервиса>
+```
+5. Выполняем подписание ранее созданного запроса на подпись с использованием сертификата и приватного ключа центра сертификации (CA):
+```bash
+openssl x509 -req -CA root_ca.crt -CAkey root_ca.key -in user_service.csr -out user_service.crt -days 365 -CAcreateserial -extfile user_service.ext
+```
+6. Для удобства последующей валидации сформируем цепочку из получившегося сертификата микросервиса и сертификата центра сертификации (CA):
+```bash
+cat user_service.crt root_ca.crt > user_service_cert.crt
+```
+7. Создаем хранилище ключей (keystore) для Java-приложения и помещаем в него под соответствующим алиасом финальный сертификат, а также приватный ключ микросервиса:
+```bash
+   openssl pkcs12 -export -in user_service_cert.crt -inkey user_service.key -name user-service -out keystore.p12
+```
+8. Получившийся файл **keystore.p12** подкладываем в директорию **~/user-service/certs/** хост-машины.
 
+---
 
 ### Деплой приложения в автоматизированном режиме 
 **ВАЖНО!:** Данный способ работает лишь при работе с версией репозитория проекта, размещенного на сервисе GitLab.<br> 
