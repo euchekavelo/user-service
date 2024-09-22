@@ -68,6 +68,21 @@ spec:
             configMapKeyRef:
               name: {{ .Values.configMap.name }}
               key: ZIPKIN_TRACING_ENDPOINT
+        - name: KEY_STORE_FILE_PATH
+          valueFrom:
+            configMapKeyRef:
+              name: { { .Values.configMap.name } }
+              key: KEY_STORE_FILE_PATH
+        - name: KEY_STORE_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: { { .Values.configMap.name } }
+              key: KEY_STORE_PASSWORD
+        - name: KEY_STORE_ALIAS
+          valueFrom:
+            configMapKeyRef:
+              name: { { .Values.configMap.name } }
+              key: KEY_STORE_ALIAS
       imagePullSecrets:
         - name: private-docker-registry
 
