@@ -11,12 +11,19 @@ services:
     ports:
       - "5432:5432"
     restart: on-failure
+    command: >
+      -c ssl=on
+      -c ssl_cert_file=/var/lib/postgresql/postgresql_service.crt
+      -c ssl_key_file=/var/lib/postgresql/postgresql_service.key
     environment:
       - POSTGRES_DB=users
       - POSTGRES_USER=postgre_user
       - POSTGRES_PASSWORD=postgre_secret_password
     volumes:
       - database-data:/var/lib/postgresql/data/
+      - $HOME/Desktop/test/postgresql_service.crt:/var/lib/postgresql/postgresql_service.crt
+      - $HOME/Desktop/test/postgresql_service.key:/var/lib/postgresql/postgresql_service.key
+    user: "${UID}:${GID}"
 
 
   minio:
@@ -39,4 +46,9 @@ services:
 
 volumes:
   database-data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $HOME/Desktop/Development/test
   minio_storage:
