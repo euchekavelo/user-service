@@ -36,7 +36,7 @@ public class S3Configuration {
     public ClientConfiguration clientConfiguration() {
         ClientConfiguration clientConfiguration = new ClientConfiguration();
         clientConfiguration.setSignerOverride(s3MinioProperties.getSigner());
-        clientConfiguration.withProtocol(Protocol.HTTP);
+        clientConfiguration.withProtocol(Protocol.HTTPS);
         return clientConfiguration;
     }
 
