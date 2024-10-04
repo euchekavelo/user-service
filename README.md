@@ -122,7 +122,7 @@ cat user_service.crt root_ca.crt > user_service_cert.crt
 ```bash
 openssl genrsa -out postgresql_service.key 2048
 ```
-2. Создаем запрос на подпись сертификата для приватного ключа микросервиса:
+2. Создаем запрос на подпись сертификата для приватного ключа сервиса БД:
 ```bash
 openssl req -new -key postgresql_service.key -out postgresql_service.csr
 ```
@@ -143,6 +143,34 @@ openssl x509 -req -CA root_ca.crt -CAkey root_ca.key -in postgresql_service.csr 
 5. Для файла, содержащего приватный ключ, устанавилваем требуемые права доступа:
 ```bash
 chmod 600 postgresql_service.key
+```
+
+#### Формирование сертификата для S3-хранилища
+1. Создаем приватный ключ для Minio:
+```bash
+openssl genrsa -out minio_service.key 2048
+```
+2. Создаем запрос на подпись сертификата для приватного ключа сервиса хранилища:
+```bash
+openssl req -new -key minio_service.key -out minio_service.csr
+```
+3. Сформируем файл **minio_service.ext** с расширениями сертификата, которые будут добавлены при подписании. В расширениях укажем, что полученный сертификат не является CA-сертификатом и не может использоваться для подписания других сертификатов, а также добавим альтернативные имена.<br>
+   Содержимое данного файла должно иметь следующий вид:
+```txt
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+subjectAltName=@alt_names
+[alt_names]
+DNS.1=<DNS имя сервиса S3-хранилища>
+IP.1=<IP-адрес сервиса S3-хранилища>
+```
+4. Выполняем подписание ранее созданного запроса на подпись с использованием сертификата и приватного ключа центра сертификации (CA):
+```bash
+openssl x509 -req -CA root_ca.crt -CAkey root_ca.key -in minio_service.csr -out minio_service.crt -days 365 -extfile minio_service.ext
+```
+5. Добавим корневой сертификат нашего центра сертификации в хранилище доверенных сертификатов JDK:
+```bash
+keytool -importcert -file <путь до файла корневого сертификата> -alias <наименование алиаса> -keystore <путь до файла cacerts> -storepass <пароль к хранилищу>
 ```
 
 ---
