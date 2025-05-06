@@ -53,7 +53,7 @@ class UserControllerTest {
     @Test
     void createUserSuccess() throws Exception {
         ShortUserDto shortUserDto = new ShortUserDto();
-        shortUserDto.setFullname("Petrov Petr Ivanovich");
+        shortUserDto.setFullName("Petrov Petr Ivanovich");
         shortUserDto.setEmail("petrov_test@gmail.com");
         shortUserDto.setSex("MALE");
 
@@ -68,7 +68,7 @@ class UserControllerTest {
     @Test
     void createUserSuccessThrowSQLExceptionForUniqueField() throws Exception {
         ShortUserDto shortUserDto = new ShortUserDto();
-        shortUserDto.setFullname("Varlamov Petr Ivanovich");
+        shortUserDto.setFullName("Varlamov Petr Ivanovich");
         shortUserDto.setEmail("varlamov_test@gmail.com");
         shortUserDto.setSex("MALE");
 
@@ -89,7 +89,7 @@ class UserControllerTest {
     @Test
     void getUserByIdSuccess() throws Exception {
         ShortUserDto shortUserDto = new ShortUserDto();
-        shortUserDto.setFullname("Sidorov Ivan Ivanovich");
+        shortUserDto.setFullName("Sidorov Ivan Ivanovich");
         shortUserDto.setEmail("sidorov_test@gmail.com");
         shortUserDto.setSex("MALE");
 
@@ -115,7 +115,7 @@ class UserControllerTest {
     @Test
     void updateUserByIdSuccess() throws Exception {
         ShortUserDto shortUserDto = new ShortUserDto();
-        shortUserDto.setFullname("Komov Ivan Ivanovich");
+        shortUserDto.setFullName("Komov Ivan Ivanovich");
         shortUserDto.setEmail("komov_test@gmail.com");
         shortUserDto.setSex("MALE");
 
@@ -171,7 +171,7 @@ class UserControllerTest {
         UUID townId = UUID.fromString("11afa0c0-2fe3-47d9-916b-761e59b11bba");
 
         ShortUserDto shortUserDto = new ShortUserDto();
-        shortUserDto.setFullname("Plotnikov Ivan Ivanovich");
+        shortUserDto.setFullName("Plotnikov Ivan Ivanovich");
         shortUserDto.setEmail("plotnikov_test@gmail.com");
         shortUserDto.setSex("MALE");
 
@@ -197,7 +197,7 @@ class UserControllerTest {
     @Test
     void deleteUserByIdSuccess() throws Exception {
         ShortUserDto shortUserDto = new ShortUserDto();
-        shortUserDto.setFullname("Smirnov Ivan Ivanovich");
+        shortUserDto.setFullName("Smirnov Ivan Ivanovich");
         shortUserDto.setEmail("smirnov_test@gmail.com");
         shortUserDto.setSex("MALE");
 
@@ -221,13 +221,13 @@ class UserControllerTest {
     @Test
     void subscribeToUserSuccess() throws Exception {
         ShortUserDto sourceShortUserDto = new ShortUserDto();
-        sourceShortUserDto.setFullname("Aleev Ivan Ivanovich");
+        sourceShortUserDto.setFullName("Aleev Ivan Ivanovich");
         sourceShortUserDto.setEmail("aleev_test@gmail.com");
         sourceShortUserDto.setSex("MALE");
         UUID sourceUserId = getNewUserIdFromDatabase(sourceShortUserDto);
 
         ShortUserDto destinationShortUserDto = new ShortUserDto();
-        destinationShortUserDto.setFullname("Vilkov Ivan Ivanovich");
+        destinationShortUserDto.setFullName("Vilkov Ivan Ivanovich");
         destinationShortUserDto.setEmail("vilkov_test@gmail.com");
         destinationShortUserDto.setSex("MALE");
         UUID destinationUserId = getNewUserIdFromDatabase(destinationShortUserDto);
@@ -250,7 +250,7 @@ class UserControllerTest {
         UUID sourceUserId = UUID.fromString("09cfa0c0-2fe3-47d9-916b-761e59b67ccd");
 
         ShortUserDto destinationShortUserDto = new ShortUserDto();
-        destinationShortUserDto.setFullname("Valeev Ivan Ivanovich");
+        destinationShortUserDto.setFullName("Valeev Ivan Ivanovich");
         destinationShortUserDto.setEmail("valeev_test@gmail.com");
         destinationShortUserDto.setSex("MALE");
         UUID destinationUserId = getNewUserIdFromDatabase(destinationShortUserDto);
@@ -271,7 +271,7 @@ class UserControllerTest {
     @Test
     void subscribeToUserThrowUserNotFoundExceptionWhenDestinationUserNotExists() throws Exception {
         ShortUserDto sourceShortUserDto = new ShortUserDto();
-        sourceShortUserDto.setFullname("Frolov Ivan Ivanovich");
+        sourceShortUserDto.setFullName("Frolov Ivan Ivanovich");
         sourceShortUserDto.setEmail("frolov_test@gmail.com");
         sourceShortUserDto.setSex("MALE");
         UUID sourceUserId = getNewUserIdFromDatabase(sourceShortUserDto);
@@ -294,7 +294,7 @@ class UserControllerTest {
     @Test
     void subscribeToUserThrowUserSubscriptionExceptionWhenSubscribeToYourself() throws Exception {
         ShortUserDto sourceShortUserDto = new ShortUserDto();
-        sourceShortUserDto.setFullname("Maneev Ivan Ivanovich");
+        sourceShortUserDto.setFullName("Maneev Ivan Ivanovich");
         sourceShortUserDto.setEmail("maneev_test@gmail.com");
         sourceShortUserDto.setSex("MALE");
         UUID sourceUserId = getNewUserIdFromDatabase(sourceShortUserDto);
@@ -315,13 +315,13 @@ class UserControllerTest {
     @Test
     void subscribeToUserThrowUserSubscriptionExceptionWhenSubscriptionExists() throws Exception {
         ShortUserDto sourceShortUserDto = new ShortUserDto();
-        sourceShortUserDto.setFullname("Akimov Ivan Ivanovich");
+        sourceShortUserDto.setFullName("Akimov Ivan Ivanovich");
         sourceShortUserDto.setEmail("akimov_test@gmail.com");
         sourceShortUserDto.setSex("MALE");
         UUID sourceUserId = getNewUserIdFromDatabase(sourceShortUserDto);
 
         ShortUserDto destinationShortUserDto = new ShortUserDto();
-        destinationShortUserDto.setFullname("Aluev Ivan Ivanovich");
+        destinationShortUserDto.setFullName("Aluev Ivan Ivanovich");
         destinationShortUserDto.setEmail("aluev_test@gmail.com");
         destinationShortUserDto.setSex("MALE");
         UUID destinationUserId = getNewUserIdFromDatabase(destinationShortUserDto);
@@ -347,13 +347,13 @@ class UserControllerTest {
     @Test
     void unsubscribeFromUserSuccess() throws Exception {
         ShortUserDto sourceShortUserDto = new ShortUserDto();
-        sourceShortUserDto.setFullname("Milov Ivan Ivanovich");
+        sourceShortUserDto.setFullName("Milov Ivan Ivanovich");
         sourceShortUserDto.setEmail("milov_test@gmail.com");
         sourceShortUserDto.setSex("MALE");
         UUID sourceUserId = getNewUserIdFromDatabase(sourceShortUserDto);
 
         ShortUserDto destinationShortUserDto = new ShortUserDto();
-        destinationShortUserDto.setFullname("Venkov Ivan Ivanovich");
+        destinationShortUserDto.setFullName("Venkov Ivan Ivanovich");
         destinationShortUserDto.setEmail("venkov_test@gmail.com");
         destinationShortUserDto.setSex("MALE");
         UUID destinationUserId = getNewUserIdFromDatabase(destinationShortUserDto);
@@ -379,7 +379,7 @@ class UserControllerTest {
     @Test
     void unsubscribeFromThrowUserSubscriptionExceptionUserWhenUserUnsubscribeYourself() throws Exception {
         ShortUserDto sourceShortUserDto = new ShortUserDto();
-        sourceShortUserDto.setFullname("Nikitov Nikita Ivanovich");
+        sourceShortUserDto.setFullName("Nikitov Nikita Ivanovich");
         sourceShortUserDto.setEmail("nikitov_test@gmail.com");
         sourceShortUserDto.setSex("MALE");
         UUID sourceUserId = getNewUserIdFromDatabase(sourceShortUserDto);
@@ -422,7 +422,7 @@ class UserControllerTest {
         UUID groupId = getNewGroupIdFromDatabase(groupDto);
 
         ShortUserDto sourceShortUserDto = new ShortUserDto();
-        sourceShortUserDto.setFullname("Teleev Nikita Ivanovich");
+        sourceShortUserDto.setFullName("Teleev Nikita Ivanovich");
         sourceShortUserDto.setEmail("teleev_test@gmail.com");
         sourceShortUserDto.setSex("MALE");
         UUID userId = getNewUserIdFromDatabase(sourceShortUserDto);
@@ -451,7 +451,7 @@ class UserControllerTest {
     @Test
     void addUserToGroupThrowGroupNotFoundException() throws Exception {
         ShortUserDto sourceShortUserDto = new ShortUserDto();
-        sourceShortUserDto.setFullname("Eleseev Nikita Ivanovich");
+        sourceShortUserDto.setFullName("Eleseev Nikita Ivanovich");
         sourceShortUserDto.setEmail("eleseev_test@gmail.com");
         sourceShortUserDto.setSex("MALE");
         UUID userId = getNewUserIdFromDatabase(sourceShortUserDto);
@@ -471,7 +471,7 @@ class UserControllerTest {
         UUID groupId = getNewGroupIdFromDatabase(groupDto);
 
         ShortUserDto sourceShortUserDto = new ShortUserDto();
-        sourceShortUserDto.setFullname("Evseev Nikita Ivanovich");
+        sourceShortUserDto.setFullName("Evseev Nikita Ivanovich");
         sourceShortUserDto.setEmail("evseev_test@gmail.com");
         sourceShortUserDto.setSex("MALE");
         UUID userId = getNewUserIdFromDatabase(sourceShortUserDto);
@@ -501,7 +501,7 @@ class UserControllerTest {
     @Test
     void createUserPhotoSuccess() throws Exception {
         ShortUserDto sourceShortUserDto = new ShortUserDto();
-        sourceShortUserDto.setFullname("Testov Nikita Ivanovich");
+        sourceShortUserDto.setFullName("Testov Nikita Ivanovich");
         sourceShortUserDto.setEmail("testov_test@gmail.com");
         sourceShortUserDto.setSex("MALE");
         UUID userId = getNewUserIdFromDatabase(sourceShortUserDto);
@@ -528,7 +528,7 @@ class UserControllerTest {
     @Test
     void createUserPhotoThrowIncorrectFileContentException() throws Exception {
         ShortUserDto sourceShortUserDto = new ShortUserDto();
-        sourceShortUserDto.setFullname("Pestov Nikita Ivanovich");
+        sourceShortUserDto.setFullName("Pestov Nikita Ivanovich");
         sourceShortUserDto.setEmail("pestov_test@gmail.com");
         sourceShortUserDto.setSex("MALE");
         UUID userId = getNewUserIdFromDatabase(sourceShortUserDto);
@@ -543,7 +543,7 @@ class UserControllerTest {
     @Test
     void createUserPhotoThrowIncorrectFileFormatException() throws Exception {
         ShortUserDto sourceShortUserDto = new ShortUserDto();
-        sourceShortUserDto.setFullname("Vestov Nikita Ivanovich");
+        sourceShortUserDto.setFullName("Vestov Nikita Ivanovich");
         sourceShortUserDto.setEmail("vestov_test@gmail.com");
         sourceShortUserDto.setSex("MALE");
         UUID userId = getNewUserIdFromDatabase(sourceShortUserDto);
@@ -558,7 +558,7 @@ class UserControllerTest {
     @Test
     void getUserPhotoByIdSuccess() throws Exception {
         ShortUserDto sourceShortUserDto = new ShortUserDto();
-        sourceShortUserDto.setFullname("Xestov Nikita Ivanovich");
+        sourceShortUserDto.setFullName("Xestov Nikita Ivanovich");
         sourceShortUserDto.setEmail("xestov_test@gmail.com");
         sourceShortUserDto.setSex("MALE");
         UUID userId = getNewUserIdFromDatabase(sourceShortUserDto);
@@ -582,7 +582,7 @@ class UserControllerTest {
     @Test
     void deleteUserPhotoByIdSuccess() throws Exception {
         ShortUserDto sourceShortUserDto = new ShortUserDto();
-        sourceShortUserDto.setFullname("Festov Nikita Ivanovich");
+        sourceShortUserDto.setFullName("Festov Nikita Ivanovich");
         sourceShortUserDto.setEmail("festov_test@gmail.com");
         sourceShortUserDto.setSex("MALE");
         UUID userId = getNewUserIdFromDatabase(sourceShortUserDto);

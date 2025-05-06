@@ -66,7 +66,7 @@ public class PhotoServiceTest {
         user = new User();
         user.setId(userId);
         user.setEmail("invanov_test@gmail.com");
-        user.setFullname("Ivanov Ivan Ivanovich");
+        user.setFullName("Ivanov Ivan Ivanovich");
         user.setSex(Sex.MALE);
 
         correctFile = new File("src/test/resources/files/correct_file.png");

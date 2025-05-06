@@ -11,7 +11,7 @@ public class ShortUserDto {
 
     @Schema(description = "Полное имя пользователя")
     @NotBlank
-    private String fullname;
+    private String fullName;
 
     @Schema(description = "Почтовый адрес пользователя")
     @NotBlank

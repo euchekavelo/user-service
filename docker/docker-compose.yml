@@ -23,6 +23,7 @@ services:
       - POSTGRES_PASSWORD=postgre_secret_password
     volumes:
       - database_data:/var/lib/postgresql/data/
+      - ./postgresql/init:/docker-entrypoint-initdb.d
       - $HOME/Desktop/test/postgresql_service.crt:/var/lib/postgresql/postgresql_service.crt
       - $HOME/Desktop/test/postgresql_service.key:/var/lib/postgresql/postgresql_service.key
     user: "${UID}:${GID}"
@@ -65,6 +66,7 @@ services:
       KEYCLOAK_DATABASE_PORT: 5432
       KEYCLOAK_DATABASE_USER: postgre_user
       KEYCLOAK_DATABASE_PASSWORD: postgre_secret_password
+      KEYCLOAK_DATABASE_SCHEMA: users_scheme
       KEYCLOAK_DATABASE_NAME: users
     ports:
       - "9080:8080"

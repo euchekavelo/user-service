@@ -37,6 +37,11 @@ public class ExceptionHandlerControllerAdvice {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getResponseDto(ex.getMessage()));
     }
 
+    @ExceptionHandler(ForbiddenAccessException.class)
+    public ResponseEntity<ResponseDto> handleForbiddenAccessException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(getResponseDto(ex.getMessage()));
+    }
+
     private ResponseDto getResponseDto(String message) {
         return ResponseDto.builder()
                 .message(message)

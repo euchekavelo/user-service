@@ -3,6 +3,7 @@ package ru.skillbox.userservice.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
+import ru.skillbox.userservice.dto.ShortUserDto;
 import ru.skillbox.userservice.dto.response.UserResponseDto;
 import ru.skillbox.userservice.dto.response.UserSubscriptionResponseDto;
 import ru.skillbox.userservice.model.User;
@@ -27,7 +28,7 @@ public abstract class UserMapper {
         userResponseDto.setSex(user.getSex());
         userResponseDto.setPhone(user.getPhone());
         userResponseDto.setEmail(user.getEmail());
-        userResponseDto.setFullname(user.getFullname());
+        userResponseDto.setFullname(user.getFullName());
         userResponseDto.setBirthDate(user.getBirthDate());
         userResponseDto.setGroups(groupMapper.userGroupListToGroupReponseDtoList(user.getUserGroupList()));
         userResponseDto.setTown(townMapper.townToTownResponseDto(user.getTown()));
@@ -45,4 +46,6 @@ public abstract class UserMapper {
 
         return userResponseDto;
     }
+
+    public abstract User shortUserDtoToUser(ShortUserDto shortUserDto);
 }
