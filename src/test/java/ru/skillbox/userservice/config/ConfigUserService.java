@@ -11,6 +11,7 @@ import ru.skillbox.userservice.mapper.PhotoMapper;
 import ru.skillbox.userservice.mapper.TownMapper;
 import ru.skillbox.userservice.mapper.UserMapper;
 import ru.skillbox.userservice.repository.*;
+import ru.skillbox.userservice.security.service.AuthorizationService;
 import ru.skillbox.userservice.service.UserService;
 import ru.skillbox.userservice.service.impl.UserServiceImpl;
 

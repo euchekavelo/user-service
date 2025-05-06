@@ -4,6 +4,8 @@ import io.micrometer.observation.annotation.Observed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import ru.skillbox.userservice.dto.ShortUserDto;
 import ru.skillbox.userservice.dto.UserDto;
@@ -24,7 +26,7 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
 
 @Observed
 @Service
- public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final TownRepository townRepository;
@@ -33,6 +35,7 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
     private final UserGroupRepository userGroupRepository;
     private final UserMapper userMapper;
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+    private final Jwt jwtToken = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, TownRepository townRepository,
@@ -49,11 +52,16 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
 
     @Override
     public UserResponseDto createUser(ShortUserDto shortUserDto) {
-        User user = new User();
-        user.setFullname(shortUserDto.getFullname());
-        user.setEmail(shortUserDto.getEmail());
-        user.setSex(Sex.valueOf(shortUserDto.getSex()));
-        User savedUser = userRepository.save(user);
+        if (currentUserIsAdmin()) {
+            User user = userMapper.shortUserDtoToUser(shortUserDto);
+        } else {
+            User user = new User();
+            user.setId(UUID.fromString(jwtToken.getClaimAsString("sub")));
+            user.setFullName(jwtToken.getClaimAsString("name"));
+            user.setEmail(jwtToken.getClaimAsString("email"));
+            user.setSex(Sex.valueOf(jwtToken.getClaimAsString("sex")));
+            User savedUser = userRepository.save(user);
+        }
 
         return userMapper.userToUserResponseDto(savedUser);
     }
@@ -84,7 +92,7 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
         }
 
         User user = optionalUser.get();
-        user.setFullname(userDto.getFullname());
+        user.setFullName(userDto.getFullname());
         user.setEmail(userDto.getEmail());
         user.setSex(Sex.valueOf(userDto.getSex()));
         user.setBirthDate(userDto.getBirthDate());
@@ -218,5 +226,10 @@ import static ru.skillbox.userservice.exception.enums.ExceptionMessage.*;
                 .id(id)
                 .result(true)
                 .build();
+    }
+
+    private boolean currentUserIsAdmin() {
+        return jwtToken.getClaimAsStringList("custom_user_roles").stream()
+                .anyMatch(role -> role.contains("users_admin"));
     }
 }

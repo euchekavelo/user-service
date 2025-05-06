@@ -1,11 +1,11 @@
 server:
   port: 8080
-  ssl:
-    enabled: true
-    key-store: ${KEY_STORE_FILE_PATH:classpath:keystore/keystore.p12}
-    key-store-password: ${KEY_STORE_PASSWORD:useruser}
-    key-store-type: PKCS12
-    key-alias: ${KEY_STORE_ALIAS:localhost}
+#  ssl:
+#    enabled: true
+#    key-store: ${KEY_STORE_FILE_PATH:classpath:keystore/keystore.p12}
+#    key-store-password: ${KEY_STORE_PASSWORD:useruser}
+#    key-store-type: PKCS12
+#    key-alias: ${KEY_STORE_ALIAS:localhost}
 
 
 spring:
@@ -19,15 +19,29 @@ spring:
   jpa:
     properties:
       hibernate:
+        format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
         temp:
           use_jdbc_metadata_defaults: false
     database-platform: org.hibernate.dialect.PostgreSQL9Dialect
     hibernate:
       ddl-auto: validate
-      format_sql: true
     show-sql: false
-
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          issuer-uri: http://localhost:9080/realms/social-network
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:9080/realms/social-network
+            user-name-attribute: preferred_username
+        registration:
+          keycloak:
+            client-id: user-service
+            client-secret: xQLE2TKb4mPMMoElsXtuFiQec5lariH6
+            scope: openid
 
 aws:
   s3:

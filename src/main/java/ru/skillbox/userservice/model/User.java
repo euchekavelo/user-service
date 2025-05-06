@@ -20,7 +20,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    private String fullname;
+    private String fullName;
 
     private LocalDate birthDate;
 
