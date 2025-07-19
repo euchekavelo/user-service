@@ -13,24 +13,16 @@ services:
     ports:
       - "5432:5432"
     restart: on-failure
-    command: >
-      -c ssl=on
-      -c ssl_cert_file=/var/lib/postgresql/postgresql_service.crt
-      -c ssl_key_file=/var/lib/postgresql/postgresql_service.key
     environment:
       - POSTGRES_DB=users
       - POSTGRES_USER=postgre_user
       - POSTGRES_PASSWORD=postgre_secret_password
     volumes:
       - database_data:/var/lib/postgresql/data/
-      - ./postgresql/init:/docker-entrypoint-initdb.d
-      - $HOME/Desktop/test/postgresql_service.crt:/var/lib/postgresql/postgresql_service.crt
-      - $HOME/Desktop/test/postgresql_service.key:/var/lib/postgresql/postgresql_service.key
-    user: "${UID}:${GID}"
 
 
   minio:
-    image: bitnami/minio:latest
+    image: bitnami/minio:2024.12.18
     container_name: minio
     ports:
       - "9100:9000"
@@ -38,12 +30,10 @@ services:
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
-      MINIO_SCHEME: https
     volumes:
       - minio_storage:/data
-      - $HOME/Desktop/test/root_ca.crt:/certs/CAs/root_ca.crt
-      - $HOME/Desktop/test/minio_service.crt:/certs/public.crt
-      - $HOME/Desktop/test/minio_service.key:/certs/private.key
+    command: minio server /data --console-address :9001
+    user: "${UID}:${GID}"
 
 
   zipkin:
@@ -66,7 +56,7 @@ services:
       KEYCLOAK_DATABASE_PORT: 5432
       KEYCLOAK_DATABASE_USER: postgre_user
       KEYCLOAK_DATABASE_PASSWORD: postgre_secret_password
-      KEYCLOAK_DATABASE_SCHEMA: users_scheme
+      KEYCLOAK_DATABASE_SCHEMA: public
       KEYCLOAK_DATABASE_NAME: users
     ports:
       - "9080:8080"
@@ -74,10 +64,4 @@ services:
 
 volumes:
   database_data:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: $HOME/Desktop/Development/test
   minio_storage:
-  keycloak_storage:
