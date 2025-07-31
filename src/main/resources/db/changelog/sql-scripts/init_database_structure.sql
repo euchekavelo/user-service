@@ -16,7 +16,9 @@ CREATE TABLE IF NOT EXISTS users_scheme.photos (
 
 CREATE TABLE IF NOT EXISTS users_scheme.users (
 	id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    fullname CHARACTER VARYING NOT NULL,
+    last_name CHARACTER VARYING NOT NULL,
+    first_name CHARACTER VARYING NOT NULL,
+    middle_name CHARACTER VARYING,
     birth_date DATE,
     email CHARACTER VARYING NOT NULL UNIQUE,
     phone CHARACTER VARYING UNIQUE,
@@ -40,7 +42,9 @@ CREATE TABLE IF NOT EXISTS users_scheme.user_subscriptions (
 
 CREATE TABLE IF NOT EXISTS users_scheme.groups (
 	id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-	name CHARACTER VARYING NOT NULL
+	name CHARACTER VARYING NOT NULL,
+    owner_user_id UUID,
+    FOREIGN KEY (owner_user_id) REFERENCES users_scheme.users (id) ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS users_scheme.users_groups (

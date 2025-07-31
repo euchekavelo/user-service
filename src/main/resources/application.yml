@@ -1,18 +1,12 @@
 server:
   port: 8080
-#  ssl:
-#    enabled: true
-#    key-store: ${KEY_STORE_FILE_PATH:classpath:keystore/keystore.p12}
-#    key-store-password: ${KEY_STORE_PASSWORD:useruser}
-#    key-store-type: PKCS12
-#    key-alias: ${KEY_STORE_ALIAS:localhost}
 
 
 spring:
   application:
     name: user-service
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/users?ssl=true&sslmode=require}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/users}
     username: ${DATABASE_USER:postgre_user}
     password: ${DATABASE_PASSWORD:postgre_secret_password}
     driver-class-name: org.postgresql.Driver
@@ -40,16 +34,16 @@ spring:
         registration:
           keycloak:
             client-id: user-service
-            client-secret: xQLE2TKb4mPMMoElsXtuFiQec5lariH6
+            client-secret: ${KEYCLOAK_CLIENT_SECRET:aSDHnUVsW87yD764QYwu4rdaW1sf5R1L}
             scope: openid
 
 aws:
   s3:
     minio:
-      endpoint: ${MINIO_ENDPOINT:https://localhost:9100/}
+      endpoint: ${MINIO_ENDPOINT:http://localhost:9100/}
       signer: AWSS3V4SignerType
-      access-key: ${MINIO_ACCESS_KEY:xT1n9rCm9ZPrbdomoNEq}
-      secret-key: ${MINIO_SECRET_KEY:B5QO9kmd4vFkrp5O1dfJd3KXaO0HMpRnCGRoGNFk}
+      access-key: ${MINIO_ACCESS_KEY:xd8DjaCcYKiFebvkcBE0}
+      secret-key: ${MINIO_SECRET_KEY:6OEtCkbSyP2PbE5dlzVZ5quBvd15aDABQhTxPjDm}
       region: ${MINIO_REGION:ru-center}
       bucket-posts: ${MINIO_BUCKET_NAME:users}
 
@@ -66,3 +60,12 @@ management:
 logging:
   pattern:
     correlation: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
+
+auth-service:
+  api:
+    admin-client-id: ${AUTH_SERVICE_API_ADMIN_CLIENT_ID:admin-cli}
+    root-url: ${AUTH_SERVICE_API_ROOT_URL:http://localhost:9080}
+    username: ${AUTH_SERVICE_API_USERNAME:admin}
+    password: ${AUTH_SERVICE_API_PASSWORD:admin}
+    realm-name: ${AUTH_SERVICE_API_REALM_NAME:social-network}
