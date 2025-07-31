@@ -17,7 +17,7 @@ public class ExceptionHandlerControllerAdvice {
     private static final String UNIQUE_VIOLATION_STATE = "23505";
 
     @ExceptionHandler({UserSubscriptionException.class, MethodArgumentNotValidException.class,
-            IncorrectFileFormatException.class, IncorrectFileContentException.class, IOException.class})
+            IncorrectFileFormatException.class, IOException.class})
     public ResponseEntity<ResponseDto> handleException(Exception ex) {
         return ResponseEntity.badRequest().body(getResponseDto(ex.getMessage()));
     }

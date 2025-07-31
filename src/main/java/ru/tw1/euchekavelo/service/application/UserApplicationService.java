@@ -150,7 +150,6 @@ public class UserApplicationService {
     private ResponseDto getResponseDto(String message) {
         return ResponseDto.builder()
                 .message(message)
-                //.id(null)
                 .result(true)
                 .build();
     }

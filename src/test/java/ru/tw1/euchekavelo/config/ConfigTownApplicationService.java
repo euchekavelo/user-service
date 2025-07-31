@@ -5,15 +5,15 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import ru.tw1.euchekavelo.mapper.TownMapper;
-import ru.tw1.euchekavelo.repository.TownRepository;
 import ru.tw1.euchekavelo.service.application.TownApplicationService;
+import ru.tw1.euchekavelo.service.domain.TownDomainService;
 
 @TestConfiguration
-public class ConfigTownService {
+public class ConfigTownApplicationService {
 
     @Bean
-    public TownRepository townRepository() {
-        return Mockito.mock(TownRepository.class);
+    public TownDomainService townDomainService() {
+        return Mockito.mock(TownDomainService.class);
     }
 
     @Bean
@@ -22,7 +22,7 @@ public class ConfigTownService {
     }
 
     @Bean
-    public TownApplicationService townService() {
-        return new TownApplicationService(townRepository(), townMapper());
+    public TownApplicationService townApplicationService() {
+        return new TownApplicationService(townDomainService(), townMapper());
     }
 }

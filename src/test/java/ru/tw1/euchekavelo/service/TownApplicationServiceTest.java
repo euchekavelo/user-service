@@ -6,51 +6,48 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.tw1.euchekavelo.config.ConfigTownService;
+import ru.tw1.euchekavelo.config.ConfigTownApplicationService;
 import ru.tw1.euchekavelo.dto.request.TownRequestDto;
 import ru.tw1.euchekavelo.dto.response.TownResponseDto;
 import ru.tw1.euchekavelo.exception.TownNotFoundException;
 import ru.tw1.euchekavelo.model.Town;
-import ru.tw1.euchekavelo.repository.TownRepository;
 import ru.tw1.euchekavelo.service.application.TownApplicationService;
+import ru.tw1.euchekavelo.service.domain.TownDomainService;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ConfigTownService.class)
+@ContextConfiguration(classes = ConfigTownApplicationService.class)
 class TownApplicationServiceTest {
+
+    @Autowired
+    private TownDomainService townDomainService;
 
     @Autowired
     private TownApplicationService townApplicationService;
 
-    @Autowired
-    private TownRepository townRepository;
-
     @Test
     void createTownTestSuccess() {
-        Town savedTown = new Town();
-        savedTown.setId(UUID.fromString("11afa0c0-2fe3-47d9-916b-761e59b67bba"));
-        savedTown.setName("Moscow");
+        Town savedTown = getTown();
+        savedTown.setId(UUID.fromString("12afa0c0-2fe3-47d9-916b-761e59b67bba"));
 
-        Mockito.when(townRepository.save(Mockito.any(Town.class))).thenReturn(savedTown);
-        TownRequestDto townRequestDto = new TownRequestDto();
-        townRequestDto.setName("Moscow");
+        TownRequestDto townRequestDto = getTownRequestDto();
+
+        Mockito.when(townDomainService.createTown(Mockito.any())).thenReturn(savedTown);
         TownResponseDto townResponseDto = townApplicationService.createTown(townRequestDto);
 
         assertThat(townResponseDto.getName()).isNotBlank();
     }
 
     @Test
-    void getTownByIdTestSuccess() throws TownNotFoundException {
-        UUID townId = UUID.fromString("11afa0c0-2fe3-47d9-916b-761e59b67bba");
-        Town town = new Town();
+    void getTownByIdTestSuccess() {
+        UUID townId = UUID.fromString("18afa0c0-2fe3-47d9-916b-761e59b67bba");
+        Town town = getTown();
         town.setId(townId);
-        town.setName("Moscow");
-        Mockito.when(townRepository.findById(townId)).thenReturn(Optional.of(town));
+        Mockito.when(townDomainService.findTownById(townId)).thenReturn(town);
 
         assertThat(townApplicationService.getTownById(townId).getId()).isEqualTo(town.getId());
         assertThat(townApplicationService.getTownById(townId).getName()).isEqualTo(town.getName());
@@ -58,50 +55,61 @@ class TownApplicationServiceTest {
 
     @Test
     void getTownByIdTestThrowTownNotFoundException() {
-        UUID townId = UUID.fromString("11afa0c0-2fe3-47d9-916b-761e59b67bba");
-        Mockito.when(townRepository.findById(townId)).thenReturn(Optional.empty());
+        UUID townId = UUID.fromString("13afa0c0-2fe3-47d9-916b-761e59b69bba");
+        Mockito.when(townDomainService.findTownById(townId)).thenThrow(TownNotFoundException.class);
 
         assertThrows(TownNotFoundException.class, () -> townApplicationService.getTownById(townId));
     }
 
     @Test
     void deleteTownByIdTestSuccess() throws TownNotFoundException {
-        UUID townId = UUID.fromString("11afa0c0-2fe3-47d9-916b-761e59b67bba");
-        Mockito.when(townRepository.findById(townId)).thenReturn(Optional.of(Mockito.mock(Town.class)));
+        UUID townId = UUID.fromString("19afa0c0-2fe3-47d9-916b-761e59b67bba");
+        Mockito.when(townDomainService.findTownById(townId)).thenReturn(Mockito.any());
 
         assertDoesNotThrow(() -> townApplicationService.deleteTownById(townId));
     }
 
     @Test
     void deleteTownByIdTestThrowTownNotFoundException() {
-        UUID townId = UUID.fromString("11afa0c0-2fe3-47d9-916b-761e59b67bba");
-        Mockito.when(townRepository.findById(townId)).thenReturn(Optional.empty());
+        UUID townId = UUID.fromString("15afa0c0-2fe3-47d9-916b-761e59b60bba");
+        Mockito.doThrow(TownNotFoundException.class).when(townDomainService).deleteTownById(townId);
 
         assertThrows(TownNotFoundException.class, () -> townApplicationService.deleteTownById(townId));
     }
 
     @Test
     void updateTownByIdTestSuccess() throws TownNotFoundException {
-        UUID townId = UUID.fromString("11afa0c0-2fe3-47d9-916b-761e59b67bba");
-        Town town = new Town();
-        town.setName("Test town");
+        UUID townId = UUID.fromString("22afa0c0-2fe3-47d9-916b-761e59b67bba");
+        Town town = getTown();
         town.setId(townId);
 
-        TownRequestDto townRequestDto = new TownRequestDto();
-        townRequestDto.setName("Omsk");
-        Mockito.when(townRepository.findById(townId)).thenReturn(Optional.of(Mockito.mock(Town.class)));
-        Mockito.when(townRepository.save(Mockito.any())).thenReturn(town);
+        TownRequestDto townRequestDto = getTownRequestDto();
+        Mockito.when(townDomainService.findTownById(townId)).thenReturn(town);
+        Mockito.when(townDomainService.updateTown(Mockito.any())).thenReturn(town);
 
         assertThat(townApplicationService.updateTownById(townId, townRequestDto).getName()).isNotNull();
     }
 
     @Test
     void updateTownByIdTestThrowTownNotFoundException() {
-        TownRequestDto townRequestDto = new TownRequestDto();
-        townRequestDto.setName("Omsk");
-        UUID townId = UUID.fromString("11afa0c0-2fe3-47d9-916b-761e59b67bba");
-        Mockito.when(townRepository.findById(townId)).thenReturn(Optional.empty());
+        TownRequestDto townRequestDto = getTownRequestDto();
+        UUID townId = UUID.fromString("88afa0c0-2fe3-47d9-916b-761e59b67bba");
+        Mockito.when(townDomainService.findTownById(townId)).thenThrow(TownNotFoundException.class);
 
         assertThrows(TownNotFoundException.class, () -> townApplicationService.updateTownById(townId, townRequestDto));
+    }
+
+    private TownRequestDto getTownRequestDto() {
+        TownRequestDto townRequestDto = new TownRequestDto();
+        townRequestDto.setName("Omsk");
+
+        return townRequestDto;
+    }
+
+    private Town getTown() {
+        Town town = new Town();
+        town.setName("Moscow");
+
+        return town;
     }
 }

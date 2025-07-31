@@ -2,9 +2,7 @@ package ru.tw1.euchekavelo.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -16,8 +14,6 @@ import java.util.UUID;
 @Table(name = "photos", schema = "users_scheme")
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class Photo {
 
     @Id

@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.tw1.euchekavelo.config.PostgreSQLContainerConfig;
 import ru.tw1.euchekavelo.config.S3Configuration;
-import ru.skillbox.userservice.dto.*;
 import ru.tw1.euchekavelo.dto.request.*;
 import ru.tw1.euchekavelo.dto.response.ResponseDto;
 import ru.tw1.euchekavelo.dto.response.UserPhotoResponseDto;

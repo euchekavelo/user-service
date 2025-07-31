@@ -8,11 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.tw1.euchekavelo.config.properties.S3MinioProperties;
-import ru.tw1.euchekavelo.exception.IncorrectFileContentException;
 import ru.tw1.euchekavelo.exception.IncorrectFileFormatException;
 import ru.tw1.euchekavelo.repository.S3Repository;
-import ru.tw1.euchekavelo.service.application.PhotoApplicationService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +17,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static ru.tw1.euchekavelo.exception.enums.ExceptionMessage.EMPTY_FILE_EXCEPTION_MESSAGE;
 import static ru.tw1.euchekavelo.exception.enums.ExceptionMessage.INVALID_FILE_EXCEPTION_MESSAGE;
 
 @Observed
@@ -33,13 +29,9 @@ public class StorageService {
     private static final Logger LOGGER = LoggerFactory.getLogger(StorageService.class);
 
     public void uploadFile(MultipartFile file, String fileName) {
-        if (file.isEmpty()) {
-            throw new IncorrectFileContentException(EMPTY_FILE_EXCEPTION_MESSAGE.getExceptionMessage());
-        }
-
         if (!isValidFormatFile(file)) {
             String enumerationFileFormats = String.join(", ", CORRECT_FILE_FORMATS);
-            String errorMessage = INVALID_FILE_EXCEPTION_MESSAGE.getExceptionMessage() + " Recommended formats: "
+            String errorMessage = INVALID_FILE_EXCEPTION_MESSAGE.getExceptionMessage() + " Рекомендуемые форматы: "
                     + enumerationFileFormats + ".";
 
             LOGGER.error(errorMessage);
