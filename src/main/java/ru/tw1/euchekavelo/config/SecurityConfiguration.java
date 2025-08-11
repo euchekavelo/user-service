@@ -63,6 +63,10 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .oauth2Login(Customizer.withDefaults())
+                .authorizeHttpRequests(auth ->
+                        auth.requestMatchers("/api/docs", "/v3/api-docs/**", "/api/swagger-ui/index.html")
+                                .hasAuthority("users_admin")
+                                .anyRequest().permitAll())
                 .build();
     }
 }

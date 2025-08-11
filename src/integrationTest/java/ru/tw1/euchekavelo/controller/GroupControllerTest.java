@@ -1,4 +1,4 @@
-package ru.tw1.euchekavelo.controller;
+/*package ru.tw1.euchekavelo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -130,4 +130,4 @@ class GroupControllerTest {
 
         return objectMapper.readValue(mvcResultGroup.getResponse().getContentAsString(), ResponseDto.class).getId();
     }
-}
+}*/

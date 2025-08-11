@@ -51,7 +51,7 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-/*val integrationTest: SourceSet = sourceSets.create("integrationTest") {
+val integrationTest: SourceSet = sourceSets.create("integrationTest") {
     java {
         compileClasspath += sourceSets.main.get().output + sourceSets.test.get().output
         runtimeClasspath += sourceSets.main.get().output + sourceSets.test.get().output
@@ -72,7 +72,11 @@ val integrationTestTask = tasks.register<Test>("integrationTest") {
     classpath = sourceSets["integrationTest"].runtimeClasspath
 
     shouldRunAfter("test")
-}*/
+}
+
+tasks.named<ProcessResources>("processIntegrationTestResources") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
 
 sonar {
     properties {
@@ -86,13 +90,13 @@ sonar {
     }
 }
 
-//tasks.test {
-//    finalizedBy(integrationTestTask, tasks.jacocoTestReport)
-//}
+tasks.test {
+    finalizedBy(integrationTestTask, tasks.jacocoTestReport)
+}
 
-/*tasks.jacocoTestReport {
+tasks.jacocoTestReport {
     reports {
         xml.required = true
     }
     dependsOn(tasks.test, integrationTestTask)
-}*/
+}

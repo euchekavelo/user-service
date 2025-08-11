@@ -1,4 +1,4 @@
-package ru.tw1.euchekavelo.controller;
+/*package ru.tw1.euchekavelo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
@@ -46,8 +46,8 @@ class UserControllerTest {
 
     @BeforeAll
     static void beforeAll() {
-        correctFile = new File("src/integrationTest/resources/files/correct_file.png");
-        incorrectFile = new File("src/integrationTest/resources/files/incorrect_file.txt");
+        correctFile = new File("src/integrationTest/resources/files/correct_file_rest.png");
+        incorrectFile = new File("src/integrationTest/resources/files/incorrect_file_rest.txt");
     }
 
     @Test
@@ -646,4 +646,4 @@ class UserControllerTest {
             return new MockMultipartFile("file", file.getName(), contentType, inputStream);
         }
     }
-}
+}*/

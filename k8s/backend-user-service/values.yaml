@@ -6,12 +6,12 @@ configMap:
 
 
 database:
-  name: users
+  name: users_db
   username: postgre_user
   password: postgre_secret_password
-  storagePath: /user-service/postgresql-storage-default
-  deployment:
-    name: deployment-postgresql
+  storagePath: /var/lib/postgresql/data
+  statefulset:
+    name: postgresql-statefulset
     namespace: *namespace
   replicas:
     count: 1
@@ -24,7 +24,7 @@ database:
     name: postgres
     version: latest
   service:
-    name: service-postgresql
+    name: postgresql-service
     port: 5432
     nodePort: 30001
 
@@ -45,7 +45,7 @@ backendUserService:
     version: latest-default
   service:
     name: service-backend-user-service
-    port: 80
+    port: 8080
     nodePort: 30000
   datasource:
     prefixConnectionUrl: jdbc:postgresql
@@ -62,9 +62,6 @@ s3:
     server:
       port: 9000
       nodePort: 30003
-  ingress:
-    name: minio-ingress
-    host: user-service-minio-default.local
   statefulSet:
     name: minio-statefulset
     container:
@@ -78,28 +75,42 @@ s3:
       version: latest
   volume:
     name: minio-pvc
-    storagePath: /user-service/minio-storage-default
+    storagePath: /var/lib/minio
   minioRegion: ru-center
   minioBucketName: users
 
 
 zipkin:
   label:
-    app: zipkin-user-service
+    app: zipkin
   deployment:
-    name: deployment-zipkin-user-service
+    name: zipkin-deployment
     namespace: *namespace
   replicas:
     count: 1
   container:
-    name: zipkin-user-service-container
+    name: zipkin-container
     port: 9411
   image:
     name: openzipkin/zipkin
   service:
-    name: service-zipkin-user-service
+    name: zipkin-service
     port: 9411
     nodePort: 30004
+
+
+keycloak:
+  issuerUri : https://euchekavelo.tw1.ru/auth-service/realms/social-network
+  clientId : user-service
+  clientSecret : msi1xut8HHefU5xR1DIYyH48OUIluCmd
+
+authService:
+  api:
+    rootUrl : https://euchekavelo.tw1.ru/auth-service
+    adminClientId : admin-cli
+    username : admin
+    password : admin
+    realmName : social-network
 
 
 ingress:
