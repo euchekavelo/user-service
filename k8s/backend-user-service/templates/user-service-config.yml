@@ -14,3 +14,11 @@ data:
   MINIO_REGION: {{ .Values.s3.minioRegion }}
   MINIO_BUCKET_NAME: {{ .Values.s3.minioBucketName }}
   ZIPKIN_TRACING_ENDPOINT: http://{{ .Values.zipkin.service.name }}:{{ .Values.zipkin.service.port }}/api/v2/spans
+  KEYCLOAK_ISSUER_URI: {{ .Values.keycloak.issuerUri }}
+  KEYCLOAK_CLIENT_ID: {{ .Values.keycloak.clientId }}
+  KEYCLOAK_CLIENT_SECRET: {{ .Values.keycloak.clientSecret }}
+  AUTH_SERVICE_API_ROOT_URL: {{ .Values.authService.api.rootUrl }}
+  AUTH_SERVICE_API_ADMIN_CLIENT_ID: {{ .Values.authService.api.adminClientId }}
+  AUTH_SERVICE_API_USERNAME: {{ .Values.authService.api.username }}
+  AUTH_SERVICE_API_PASSWORD: {{ .Values.authService.api.password }}
+  AUTH_SERVICE_API_REALM_NAME: {{ .Values.authService.api.realmName }}

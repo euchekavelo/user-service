@@ -68,6 +68,42 @@ spec:
             configMapKeyRef:
               name: {{ .Values.configMap.name }}
               key: ZIPKIN_TRACING_ENDPOINT
+        - name: KEYCLOAK_ISSUER_URI
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.configMap.name }}
+              key: KEYCLOAK_ISSUER_URI
+        - name: KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.configMap.name }}
+              key: KEYCLOAK_CLIENT_ID
+        - name: KEYCLOAK_CLIENT_SECRET
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.configMap.name }}
+              key: KEYCLOAK_CLIENT_SECRET
+
+        - name: AUTH_SERVICE_API_ROOT_URL
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.configMap.name }}
+              key: AUTH_SERVICE_API_ROOT_URL
+        - name: AUTH_SERVICE_API_ADMIN_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.configMap.name }}
+              key: AUTH_SERVICE_API_ADMIN_CLIENT_ID
+        - name: AUTH_SERVICE_API_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.configMap.name }}
+              key: AUTH_SERVICE_API_USERNAME
+        - name: AUTH_SERVICE_API_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.configMap.name }}
+              key: AUTH_SERVICE_API_PASSWORD
       imagePullSecrets:
         - name: private-docker-registry
 
@@ -89,3 +125,32 @@ spec:
     port: {{ .Values.backendUserService.service.port }}
     targetPort: {{ .Values.backendUserService.container.port }}
     nodePort: {{ .Values.backendUserService.service.nodePort }}
+
+
+---
+
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.ingress.name }}
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  namespace: {{ .Values.namespace }}
+spec:
+  tls:
+  - hosts:
+    - {{ .Values.ingress.host }}
+    secretName: {{ .Values.namespace }}-user-service-ingress-tls
+  rules:
+  - host: {{ .Values.ingress.host }}
+    http:
+      paths:
+      - path: /user-service
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Values.backendUserService.service.name }}
+            port:
+              number: {{ .Values.backendUserService.service.port }}

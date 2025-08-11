@@ -60,7 +60,6 @@ public class UserApplicationService {
     }
 
     public UserResponseDto getUserById(UUID id) {
-        authorizationService.checkAccess(id);
         User user = userDomainService.findUserById(id);
 
         return userMapper.userToUserResponseDto(user);

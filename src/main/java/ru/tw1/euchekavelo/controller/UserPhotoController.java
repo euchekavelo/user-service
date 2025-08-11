@@ -22,7 +22,8 @@ import ru.tw1.euchekavelo.service.application.PhotoApplicationService;
 
 import java.util.UUID;
 
-@Tag(name="Контроллер по работе с фотографиями пользователей", description="Спецификация API микросервиса по работе пользователями.")
+@Tag(name="Контроллер по работе с фотографиями пользователей", description="Спецификация API микросервиса по работе " +
+        "с фотографиями пользователями.")
 @RestController
 @RequestMapping("/users/{userId}/photos")
 @RequiredArgsConstructor

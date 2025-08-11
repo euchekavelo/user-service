@@ -13,8 +13,8 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseDto {
 
-    /*@Schema(description = "ID объекта")
-    private UUID id;*/
+    @Schema(description = "ID объекта")
+    private UUID id;
 
     @Schema(description = "Сообщение")
     private String message;

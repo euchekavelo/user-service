@@ -1,6 +1,11 @@
 server:
   port: 8080
+  servlet:
+    context-path: /user-service
 
+springdoc:
+  swagger-ui:
+    path: /api/docs
 
 spring:
   application:
@@ -25,16 +30,16 @@ spring:
     oauth2:
       resource-server:
         jwt:
-          issuer-uri: http://localhost:9080/realms/social-network
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:9080/realms/social-network}
       client:
         provider:
           keycloak:
-            issuer-uri: http://localhost:9080/realms/social-network
+            issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:9080/realms/social-network}
             user-name-attribute: preferred_username
         registration:
           keycloak:
-            client-id: user-service
-            client-secret: ${KEYCLOAK_CLIENT_SECRET:aSDHnUVsW87yD764QYwu4rdaW1sf5R1L}
+            client-id: ${KEYCLOAK_CLIENT_ID:user-service}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET:SXfAxEgFoU0t2LphM9CU4YXyFXDqqIuk}
             scope: openid
 
 aws:
