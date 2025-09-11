@@ -20,7 +20,7 @@ public class UserDetailsContextUtil {
     }
 
     public UUID getUserId() {
-        Object principal = getPrincipal();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof Jwt) {
             return UUID.fromString(((Jwt) principal).getClaimAsString("user_id"));
@@ -29,9 +29,5 @@ public class UserDetailsContextUtil {
         }
 
         return null;
-    }
-
-    private Object getPrincipal() {
-        return SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }

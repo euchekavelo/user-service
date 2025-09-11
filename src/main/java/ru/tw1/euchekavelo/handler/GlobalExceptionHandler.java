@@ -1,10 +1,11 @@
-package ru.tw1.euchekavelo.controller;
+package ru.tw1.euchekavelo.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.RestClientException;
 import ru.tw1.euchekavelo.dto.response.ResponseDto;
 import ru.tw1.euchekavelo.exception.*;
 
@@ -12,7 +13,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 @ControllerAdvice
-public class ExceptionHandlerControllerAdvice {
+public class GlobalExceptionHandler {
 
     private static final String UNIQUE_VIOLATION_STATE = "23505";
 
@@ -42,8 +43,8 @@ public class ExceptionHandlerControllerAdvice {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(getResponseDto(ex.getMessage()));
     }
 
-    @ExceptionHandler(AuthServiceException.class)
-    public ResponseEntity<ResponseDto> handleExceptionsFromAuthService(AuthServiceException ex) {
+    @ExceptionHandler(RestClientException.class)
+    public ResponseEntity<ResponseDto> handleExceptionsFromAuthService(RestClientException ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(getResponseDto(ex.getMessage()));
     }
 

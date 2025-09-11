@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Schema(description = "Входящий объект с информацией о пользователе (полный).")
 @Data
@@ -36,7 +35,4 @@ public class UserRequestDto {
 
     @Schema(description = "Телефон")
     private String phone;
-
-    @Schema(description = "ID города")
-    private UUID townId;
 }

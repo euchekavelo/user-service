@@ -20,7 +20,7 @@ import ru.tw1.euchekavelo.dto.request.UserRequestDto;
 import ru.tw1.euchekavelo.dto.response.ResponseDto;
 import ru.tw1.euchekavelo.dto.request.UserSubscriptionDto;
 import ru.tw1.euchekavelo.dto.response.UserResponseDto;
-import ru.tw1.euchekavelo.service.application.UserApplicationService;
+import ru.tw1.euchekavelo.service.facade.UserFacadeService;
 
 import java.util.UUID;
 
@@ -30,7 +30,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserApplicationService userApplicationService;
+    private final UserFacadeService userFacadeService;
 
     @SecurityRequirements
     @Observed(contextualName = "Tracing createUser method controller")
@@ -48,7 +48,7 @@ public class UserController {
     })
     @PostMapping
     public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody ShortUserRequestDto shortUserRequestDto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(userApplicationService.createUser(shortUserRequestDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userFacadeService.createUser(shortUserRequestDto));
     }
 
     @SecurityRequirements
@@ -67,7 +67,7 @@ public class UserController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUserById(@Parameter(description = "ID пользователя.") @PathVariable UUID id) {
-        return ResponseEntity.ok(userApplicationService.getUserById(id));
+        return ResponseEntity.ok(userFacadeService.getUserById(id));
     }
 
     @PreAuthorize("hasAnyAuthority('users_viewer', 'users_admin')")
@@ -91,7 +91,7 @@ public class UserController {
     public ResponseEntity<UserResponseDto> updateUserById(@Parameter(description = "ID пользователя.")
                                                           @PathVariable UUID id, @Valid @RequestBody UserRequestDto userRequestDto) {
 
-        return ResponseEntity.ok(userApplicationService.updateUserById(id, userRequestDto));
+        return ResponseEntity.ok(userFacadeService.updateUserById(id, userRequestDto));
     }
 
     @PreAuthorize("hasAnyAuthority('users_viewer', 'users_admin')")
@@ -108,7 +108,7 @@ public class UserController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@Parameter(description = "ID пользователя.") @PathVariable UUID id) {
-        userApplicationService.deleteUserById(id);
+        userFacadeService.deleteUserById(id);
 
         return ResponseEntity.noContent().build();
     }
@@ -132,14 +132,14 @@ public class UserController {
     })
     @PostMapping("/subscription")
     public ResponseEntity<ResponseDto> subscribeToUser(@RequestBody UserSubscriptionDto userSubscriptionDto) {
-        return ResponseEntity.ok(userApplicationService.subscribeToUser(userSubscriptionDto));
+        return ResponseEntity.ok(userFacadeService.subscribeToUser(userSubscriptionDto));
     }
 
     @PreAuthorize("hasAnyAuthority('users_viewer', 'users_admin')")
     @Observed(contextualName = "Tracing unsubscribeFromUser method controller")
     @Operation(summary = "Отменить подписку между пользователями.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = {
+            @ApiResponse(responseCode = "204", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class))
             }),
             @ApiResponse(responseCode = "400", content = {
@@ -149,54 +149,10 @@ public class UserController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class))
             })
     })
-    @PostMapping("/unsubscription")
-    public ResponseEntity<ResponseDto> unsubscribeFromUser(@RequestBody UserSubscriptionDto userSubscriptionDto) {
-        return ResponseEntity.ok(userApplicationService.unsubscribeFromUser(userSubscriptionDto));
-    }
+    @DeleteMapping("/subscription")
+    public ResponseEntity<Void> unsubscribeFromUser(@RequestBody UserSubscriptionDto userSubscriptionDto) {
+        userFacadeService.unsubscribeFromUser(userSubscriptionDto);
 
-    @PreAuthorize("hasAnyAuthority('users_viewer', 'users_admin')")
-    @Observed(contextualName = "Tracing addUserToGroup method controller")
-    @Operation(summary = "Добавить пользователя в группу.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class))
-            }),
-            @ApiResponse(responseCode = "404", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class))
-            }),
-            @ApiResponse(responseCode = "500", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class))
-            })
-    })
-    @PostMapping("/{userId}/groups/{groupId}")
-    public ResponseEntity<ResponseDto> addUserToGroup(@Parameter(description = "ID пользователя.")
-                                                      @PathVariable UUID userId,
-                                                      @Parameter(description = "ID группы.")
-                                                      @PathVariable UUID groupId) {
-
-        return ResponseEntity.ok(userApplicationService.addUserToGroup(userId, groupId));
-    }
-
-    @PreAuthorize("hasAnyAuthority('users_viewer', 'users_admin')")
-    @Observed(contextualName = "Tracing deleteUserFromGroup method controller")
-    @Operation(summary = "Удалить пользователя из группы.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class))
-            }),
-            @ApiResponse(responseCode = "404", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class))
-            }),
-            @ApiResponse(responseCode = "500", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class))
-            })
-    })
-    @DeleteMapping("/{userId}/groups/{groupId}")
-    public ResponseEntity<ResponseDto> deleteUserFromGroup(@Parameter(description = "ID пользователя.")
-                                                           @PathVariable UUID userId,
-                                                           @Parameter(description = "ID группы.")
-                                                           @PathVariable UUID groupId) {
-
-        return ResponseEntity.ok(userApplicationService.deleteUserFromGroup(userId, groupId));
+        return ResponseEntity.noContent().build();
     }
 }

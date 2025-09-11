@@ -1,4 +1,4 @@
-package ru.tw1.euchekavelo.service.application;
+package ru.tw1.euchekavelo.service.facade;
 
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.UUID;
 @Observed
 @Service
 @RequiredArgsConstructor
-public class PhotoApplicationService {
+public class PhotoFacadeService {
 
     private final S3MinioProperties s3MinioProperties;
     private final PhotoDomainService photoDomainService;

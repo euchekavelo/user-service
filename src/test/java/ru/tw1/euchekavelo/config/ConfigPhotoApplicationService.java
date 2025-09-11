@@ -10,7 +10,7 @@ import ru.tw1.euchekavelo.mapper.PhotoMapper;
 import ru.tw1.euchekavelo.model.Photo;
 import ru.tw1.euchekavelo.service.EntityAccessCheckService;
 import ru.tw1.euchekavelo.service.StorageService;
-import ru.tw1.euchekavelo.service.application.PhotoApplicationService;
+import ru.tw1.euchekavelo.service.facade.PhotoFacadeService;
 import ru.tw1.euchekavelo.service.domain.PhotoDomainService;
 import ru.tw1.euchekavelo.service.domain.UserDomainService;
 
@@ -49,8 +49,8 @@ public class ConfigPhotoApplicationService {
     }
 
     @Bean
-    public PhotoApplicationService photoApplicationService() {
-        return new PhotoApplicationService(s3MinioProperties(), photoDomainService(), photoMapper(),
+    public PhotoFacadeService photoApplicationService() {
+        return new PhotoFacadeService(s3MinioProperties(), photoDomainService(), photoMapper(),
                 userDomainService(), storageService(),entityAccessCheckService());
     }
 }

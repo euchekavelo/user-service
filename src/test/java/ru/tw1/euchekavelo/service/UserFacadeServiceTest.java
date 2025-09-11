@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.tw1.euchekavelo.client.api.AuthServiceApiClient;
 import ru.tw1.euchekavelo.config.ConfigUserApplicationService;
+import ru.tw1.euchekavelo.dto.external.response.TokenResponseDto;
 import ru.tw1.euchekavelo.dto.external.response.UserExternalResponseDto;
 import ru.tw1.euchekavelo.dto.request.ShortUserRequestDto;
 import ru.tw1.euchekavelo.dto.request.UserRequestDto;
@@ -19,7 +20,7 @@ import ru.tw1.euchekavelo.dto.response.UserResponseDto;
 import ru.tw1.euchekavelo.exception.*;
 import ru.tw1.euchekavelo.model.*;
 import ru.tw1.euchekavelo.model.enums.Sex;
-import ru.tw1.euchekavelo.service.application.UserApplicationService;
+import ru.tw1.euchekavelo.service.facade.UserFacadeService;
 import ru.tw1.euchekavelo.service.domain.*;
 
 import java.time.LocalDate;
@@ -34,10 +35,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ConfigUserApplicationService.class, initializers = ConfigDataApplicationContextInitializer.class)
-class UserApplicationServiceTest {
+class UserFacadeServiceTest {
 
     @Autowired
-    private UserApplicationService userApplicationService;
+    private UserFacadeService userFacadeService;
 
     @Autowired
     private UserDomainService userDomainService;
@@ -49,38 +50,23 @@ class UserApplicationServiceTest {
     private AuthorizationService authorizationService;
 
     @Autowired
-    private TownDomainService townDomainService;
-
-    @Autowired
     private UserSubscriptionDomainService userSubscriptionDomainService;
 
-    @Autowired
-    private UserGroupDomainService userGroupDomainService;
-
-    @Autowired
-    private GroupDomainService groupDomainService;
-
     private static UUID userId;
-    private static UUID townId;
-    private static UUID groupId;
     private static User user;
-    private static Town town;
-    private static Group group;
     private static UserRequestDto userRequestDto;
     private static ShortUserRequestDto shortUserRequestDto;
     private static UserExternalResponseDto userExternalResponseDto;
+    private static TokenResponseDto tokenResponseDto;
 
     @BeforeAll
     static void beforeAll() {
         userId = UUID.randomUUID();
-        townId = UUID.randomUUID();
-        groupId = UUID.randomUUID();
-        group = getGroupWithId(groupId);
         user = getUserWithId(userId);
         shortUserRequestDto = getShortUserRequestDto();
-        userRequestDto = getUserRequestDtoWithTownId(townId);
-        town = getTownWithId(userRequestDto.getTownId());
+        userRequestDto = getUserRequestDto();
         userExternalResponseDto = getUserExternalResponseDto();
+        tokenResponseDto = new TokenResponseDto();
     }
 
     @BeforeEach
@@ -88,18 +74,16 @@ class UserApplicationServiceTest {
         Mockito.reset(userDomainService);
         Mockito.reset(authServiceApiClient);
         Mockito.reset(authorizationService);
-        Mockito.reset(townDomainService);
         Mockito.reset(authServiceApiClient);
         Mockito.reset(userSubscriptionDomainService);
-        Mockito.reset(groupDomainService);
-        Mockito.reset(userGroupDomainService);
     }
 
     @Test
     void createUserTestSuccess() {
         Mockito.when(userDomainService.saveUser(Mockito.any())).thenReturn(user);
-        Mockito.doNothing().when(authServiceApiClient).createUser(Mockito.any());
-        UserResponseDto userResponseDto = userApplicationService.createUser(shortUserRequestDto);
+        Mockito.when(authServiceApiClient.getAdminToken()).thenReturn(tokenResponseDto);
+        Mockito.doNothing().when(authServiceApiClient).createUser(Mockito.any(), Mockito.any());
+        UserResponseDto userResponseDto = userFacadeService.createUser(shortUserRequestDto);
 
         assertThat(userResponseDto.getId()).isNotNull();
     }
@@ -109,7 +93,7 @@ class UserApplicationServiceTest {
     void getUserByIdTestSuccess() {
         Mockito.when(userDomainService.findUserById(userId)).thenReturn(user);
 
-        UserResponseDto userResponseDto = userApplicationService.getUserById(userId);
+        UserResponseDto userResponseDto = userFacadeService.getUserById(userId);
         assertThat(userResponseDto.getEmail()).isEqualTo("invanov_test@gmail.com");
     }
 
@@ -117,45 +101,30 @@ class UserApplicationServiceTest {
     void getUserByIdThrowUserNotFoundException() {
         Mockito.when(userDomainService.findUserById(userId)).thenThrow(UserNotFoundException.class);
 
-        assertThrows(UserNotFoundException.class, () -> userApplicationService.getUserById(userId));
-    }
-
-    @Test
-    void getUserByIdThrowResourceAccessException() {
-        Mockito.doThrow(ResourceAccessDeniedException.class).when(authorizationService).checkAccess(userId);
-
-        assertThrows(ResourceAccessDeniedException.class, () -> userApplicationService.getUserById(userId));
+        assertThrows(UserNotFoundException.class, () -> userFacadeService.getUserById(userId));
     }
 
     @Test
     void updateUserByIdTestSuccess() {
         Mockito.doNothing().when(authorizationService).checkAccess(userId);
         Mockito.when(userDomainService.findUserById(userId)).thenReturn(user);
-        Mockito.when(townDomainService.findTownById(userRequestDto.getTownId())).thenReturn(town);
-        Mockito.when(authServiceApiClient.getUsersByAttributeValue(Mockito.any(), Mockito.any()))
+        Mockito.when(authServiceApiClient.getAdminToken()).thenReturn(tokenResponseDto);
+        Mockito.when(authServiceApiClient.getUsersByAttributeValue(Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenReturn(Optional.of(userExternalResponseDto));
 
         Mockito.when(userDomainService.updateUser(user)).thenReturn(user);
-        Mockito.doNothing().when(authServiceApiClient).updateUserById(Mockito.any(), Mockito.any());
+        Mockito.doNothing().when(authServiceApiClient).updateUserById(Mockito.any(), Mockito.any(), Mockito.any());
 
-        assertThat(userApplicationService.updateUserById(userId, userRequestDto).getEmail())
+        assertThat(userFacadeService.updateUserById(userId, userRequestDto).getEmail())
                 .isEqualTo("invanov_test@gmail.com");
     }
 
     @Test
     void updateUserByIdTestThrowUserNotFoundException() {
-        UserRequestDto userRequestDto = getUserRequestDtoWithTownId(townId);
+        UserRequestDto userRequestDto = getUserRequestDto();
         Mockito.when(userDomainService.findUserById(userId)).thenThrow(UserNotFoundException.class);
 
-        assertThrows(UserNotFoundException.class, () -> userApplicationService.updateUserById(userId, userRequestDto));
-    }
-
-    @Test
-    void updateUserByIdTestThrowTownNotFoundException() {
-        Mockito.when(userDomainService.findUserById(userId)).thenReturn(user);
-        Mockito.when(townDomainService.findTownById(townId)).thenThrow(TownNotFoundException.class);
-
-        assertThrows(TownNotFoundException.class, () -> userApplicationService.updateUserById(userId, userRequestDto));
+        assertThrows(UserNotFoundException.class, () -> userFacadeService.updateUserById(userId, userRequestDto));
     }
 
     @Test
@@ -163,36 +132,40 @@ class UserApplicationServiceTest {
         Mockito.doThrow(ResourceAccessDeniedException.class).when(authorizationService).checkAccess(userId);
 
         assertThrows(ResourceAccessDeniedException.class,
-                () -> userApplicationService.updateUserById(userId, userRequestDto));
+                () -> userFacadeService.updateUserById(userId, userRequestDto));
     }
 
     @Test
     void updateUserByIdTestThrowUserNotFoundExceptionFromApiClient() {
-        Mockito.when(authServiceApiClient.getUsersByAttributeValue(Mockito.any(), Mockito.any()))
+        Mockito.when(authServiceApiClient.getAdminToken()).thenReturn(tokenResponseDto);
+        Mockito.when(authServiceApiClient.getUsersByAttributeValue(Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> userApplicationService.updateUserById(userId, userRequestDto));
+        assertThrows(UserNotFoundException.class, () -> userFacadeService.updateUserById(userId, userRequestDto));
     }
 
     @Test
     void deleteUserByIdTestSuccess() {
+        Mockito.when(authServiceApiClient.getAdminToken()).thenReturn(tokenResponseDto);
+        Mockito.when(authServiceApiClient.getUsersByAttributeValue(Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(Optional.of(userExternalResponseDto));
         Mockito.doNothing().when(userDomainService).deleteUserById(userId);
 
-        assertDoesNotThrow(() -> userApplicationService.deleteUserById(userId));
+        assertDoesNotThrow(() -> userFacadeService.deleteUserById(userId));
     }
 
     @Test
     void deleteUserByIdTestThrowUserNotFoundException() {
         Mockito.doThrow(UserNotFoundException.class).when(userDomainService).deleteUserById(userId);
 
-        assertThrows(UserNotFoundException.class, () -> userApplicationService.deleteUserById(userId));
+        assertThrows(UserNotFoundException.class, () -> userFacadeService.deleteUserById(userId));
     }
 
     @Test
     void deleteUserByIdTestResourceAccessDeniedException() {
         Mockito.doThrow(ResourceAccessDeniedException.class).when(authorizationService).checkAccess(userId);
 
-        assertThrows(ResourceAccessDeniedException.class, () -> userApplicationService.deleteUserById(userId));
+        assertThrows(ResourceAccessDeniedException.class, () -> userFacadeService.deleteUserById(userId));
     }
 
     @Test
@@ -212,7 +185,7 @@ class UserApplicationServiceTest {
         Mockito.when(userDomainService.findUserById(userId)).thenReturn(user);
         Mockito.when(userDomainService.findUserById(destinationUserId)).thenReturn(destinationUser);
 
-        assertThat(userApplicationService.subscribeToUser(userSubscriptionDto).getMessage())
+        assertThat(userFacadeService.subscribeToUser(userSubscriptionDto).getMessage())
                 .isEqualTo("The target user was successfully subscribed.");
     }
 
@@ -222,7 +195,7 @@ class UserApplicationServiceTest {
         userSubscriptionDto.setSourceUserId(userId);
         userSubscriptionDto.setDestinationUserId(userId);
 
-        assertThrows(UserSubscriptionException.class, () -> userApplicationService.subscribeToUser(userSubscriptionDto));
+        assertThrows(UserSubscriptionException.class, () -> userFacadeService.subscribeToUser(userSubscriptionDto));
     }
 
     @Test
@@ -241,7 +214,7 @@ class UserApplicationServiceTest {
         Mockito.when(userDomainService.findUserById(userId)).thenThrow(UserNotFoundException.class);
         Mockito.when(userDomainService.findUserById(destinationUserId)).thenReturn(destinationUser);
 
-        assertThrows(UserNotFoundException.class, () -> userApplicationService.subscribeToUser(userSubscriptionDto));
+        assertThrows(UserNotFoundException.class, () -> userFacadeService.subscribeToUser(userSubscriptionDto));
     }
 
     @Test
@@ -255,7 +228,7 @@ class UserApplicationServiceTest {
         Mockito.when(userDomainService.findUserById(userId)).thenReturn(user);
         Mockito.when(userDomainService.findUserById(destinationUserId)).thenThrow(UserNotFoundException.class);
 
-        assertThrows(UserNotFoundException.class, () -> userApplicationService.subscribeToUser(userSubscriptionDto));
+        assertThrows(UserNotFoundException.class, () -> userFacadeService.subscribeToUser(userSubscriptionDto));
     }
 
     @Test
@@ -269,7 +242,7 @@ class UserApplicationServiceTest {
         Mockito.when(userSubscriptionDomainService.createUserSubscription(Mockito.any(), Mockito.any()))
                 .thenThrow(UserSubscriptionException.class);
 
-        assertThrows(UserSubscriptionException.class, () -> userApplicationService.subscribeToUser(userSubscriptionDto));
+        assertThrows(UserSubscriptionException.class, () -> userFacadeService.subscribeToUser(userSubscriptionDto));
     }
 
     @Test
@@ -283,7 +256,7 @@ class UserApplicationServiceTest {
         Mockito.doThrow(ResourceAccessDeniedException.class).when(authorizationService).checkAccess(userId);
 
         assertThrows(ResourceAccessDeniedException.class,
-                () -> userApplicationService.subscribeToUser(userSubscriptionDto));
+                () -> userFacadeService.subscribeToUser(userSubscriptionDto));
     }
 
     @Test
@@ -303,8 +276,7 @@ class UserApplicationServiceTest {
         Mockito.when(userDomainService.findUserById(userId)).thenReturn(user);
         Mockito.when(userDomainService.findUserById(destinationUserId)).thenReturn(destinationUser);
 
-        assertThat(userApplicationService.unsubscribeFromUser(userSubscriptionDto).getMessage())
-                .isEqualTo("The destination user has been unsubscribed successfully.");
+        assertDoesNotThrow(() -> userFacadeService.unsubscribeFromUser(userSubscriptionDto));
     }
 
     @Test
@@ -314,7 +286,7 @@ class UserApplicationServiceTest {
         userSubscriptionDto.setDestinationUserId(userId);
 
         assertThrows(UserSubscriptionException.class,
-                () -> userApplicationService.unsubscribeFromUser(userSubscriptionDto));
+                () -> userFacadeService.unsubscribeFromUser(userSubscriptionDto));
     }
 
     @Test
@@ -329,7 +301,7 @@ class UserApplicationServiceTest {
                 .deleteUserSubscriptionBySourceUserIdAndDestinationUserId(userId, destinationUserId);
 
         assertThrows(UserSubscriptionException.class,
-                () -> userApplicationService.unsubscribeFromUser(userSubscriptionDto));
+                () -> userFacadeService.unsubscribeFromUser(userSubscriptionDto));
     }
 
     @Test
@@ -343,72 +315,7 @@ class UserApplicationServiceTest {
         Mockito.doThrow(ResourceAccessDeniedException.class).when(authorizationService).checkAccess(userId);
 
         assertThrows(ResourceAccessDeniedException.class,
-                () -> userApplicationService.unsubscribeFromUser(userSubscriptionDto));
-    }
-
-    @Test
-    void addUserToGroupTestSuccess() {
-        Mockito.when(userDomainService.findUserById(userId)).thenReturn(user);
-        Mockito.when(groupDomainService.getGroupById(groupId)).thenReturn(group);
-
-        assertThat(userApplicationService.addUserToGroup(userId, groupId).getMessage())
-                .isEqualTo("The user has been successfully added to the group.");
-    }
-
-    @Test
-    void addUserToGroupTestThrowUserNotFoundException() {
-        Mockito.when(userDomainService.findUserById(userId)).thenThrow(UserNotFoundException.class);
-        Mockito.when(groupDomainService.getGroupById(groupId)).thenReturn(group);
-
-        assertThrows(UserNotFoundException.class, () -> userApplicationService.addUserToGroup(userId, groupId));
-    }
-
-    @Test
-    void addUserToGroupTestThrowGroupNotFoundException() {
-        Mockito.when(userDomainService.findUserById(userId)).thenReturn(user);
-        Mockito.when(groupDomainService.getGroupById(groupId)).thenThrow(GroupNotFoundException.class);
-
-        assertThrows(GroupNotFoundException.class, () -> userApplicationService.addUserToGroup(userId, groupId));
-    }
-
-    @Test
-    void addUserToGroupTestThrowResourceAccessDeniedException() {
-        Mockito.doThrow(ResourceAccessDeniedException.class).when(authorizationService).checkAccess(userId);
-
-        assertThrows(ResourceAccessDeniedException.class, () -> userApplicationService.addUserToGroup(userId, groupId));
-    }
-
-    @Test
-    void deleteUserFromGroupTestSuccess() throws UserGroupNotFoundException {
-        Mockito.doNothing().when(userGroupDomainService).deleteUserGroupByUserIdAndGroupId(userId, groupId);
-
-        assertThat(userApplicationService.deleteUserFromGroup(userId, groupId).getMessage())
-                .isEqualTo("The user has been successfully removed from the group.");
-    }
-
-    @Test
-    void deleteUserFromGroupTestThrowUserGroupException() {
-        Mockito.doThrow(UserGroupNotFoundException.class).when(userGroupDomainService)
-                .deleteUserGroupByUserIdAndGroupId(userId, groupId);
-
-        assertThrows(UserGroupNotFoundException.class,
-                () -> userApplicationService.deleteUserFromGroup(userId, groupId));
-    }
-
-    @Test
-    void deleteUserFromGroupTestThrowResourceAccessDeniedException() {
-        Mockito.doThrow(ResourceAccessDeniedException.class).when(authorizationService).checkAccess(userId);
-
-        assertThrows(ResourceAccessDeniedException.class,
-                () -> userApplicationService.deleteUserFromGroup(userId, groupId));
-    }
-
-    private static Town getTownWithId(UUID id) {
-        Town town = new Town();
-        town.setId(id);
-        town.setName("Test city");
-
-        return town;
+                () -> userFacadeService.unsubscribeFromUser(userSubscriptionDto));
     }
 
     private static UserExternalResponseDto getUserExternalResponseDto() {
@@ -449,25 +356,16 @@ class UserApplicationServiceTest {
         return shortUserRequestDto;
     }
 
-    private static UserRequestDto getUserRequestDtoWithTownId(UUID townId) {
+    private static UserRequestDto getUserRequestDto() {
         UserRequestDto userRequestDto = new UserRequestDto();
         userRequestDto.setFirstName("Ivan");
         userRequestDto.setLastName("Ivanov");
         userRequestDto.setMiddleName("Ivanovich");
         userRequestDto.setEmail("invanov_test@gmail.com");
-        userRequestDto.setTownId(townId);
         userRequestDto.setSex(Sex.MALE.name());
         userRequestDto.setBirthDate(LocalDate.of(1990, 1, 1));
         userRequestDto.setPhone("+7123456789");
 
         return userRequestDto;
-    }
-
-    private static Group getGroupWithId(UUID groupId) {
-        Group group = new Group();
-        group.setId(groupId);
-        group.setName("Test group");
-
-        return group;
     }
 }

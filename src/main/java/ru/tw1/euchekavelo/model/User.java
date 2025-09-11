@@ -32,11 +32,6 @@ public class User {
 
     private String phone;
 
-    @ManyToOne
-    @JoinColumn(name = "town_id")
-    @JsonBackReference
-    private Town town;
-
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
@@ -48,16 +43,8 @@ public class User {
     @JsonManagedReference
     private List<UserSubscription> userDestinationList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<UserGroup> userGroupList = new ArrayList<>();
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "photo_id", referencedColumnName = "id")
     @JsonBackReference
     private Photo photo;
-
-    @OneToMany(mappedBy = "ownerUser")
-    @JsonManagedReference
-    private List<Group> groupList = new ArrayList<>();
 }

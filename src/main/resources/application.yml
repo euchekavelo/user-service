@@ -39,7 +39,7 @@ spring:
         registration:
           keycloak:
             client-id: ${KEYCLOAK_CLIENT_ID:user-service}
-            client-secret: ${KEYCLOAK_CLIENT_SECRET:SXfAxEgFoU0t2LphM9CU4YXyFXDqqIuk}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET:3t3zZ2yNVQeTgTHb6JMikA2NqHIquSSc}
             scope: openid
 
 aws:
