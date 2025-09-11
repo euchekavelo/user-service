@@ -22,7 +22,7 @@ import ru.tw1.euchekavelo.exception.UserNotFoundException;
 import ru.tw1.euchekavelo.model.Photo;
 import ru.tw1.euchekavelo.model.User;
 import ru.tw1.euchekavelo.model.enums.Sex;
-import ru.tw1.euchekavelo.service.application.PhotoApplicationService;
+import ru.tw1.euchekavelo.service.facade.PhotoFacadeService;
 import ru.tw1.euchekavelo.service.domain.PhotoDomainService;
 import ru.tw1.euchekavelo.service.domain.UserDomainService;
 
@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ConfigPhotoApplicationService.class, initializers = ConfigDataApplicationContextInitializer.class)
-public class PhotoApplicationServiceTest {
+public class PhotoFacadeServiceTest {
 
     @Autowired
     private PhotoDomainService photoDomainService;
@@ -51,7 +51,7 @@ public class PhotoApplicationServiceTest {
     private EntityAccessCheckService<Photo> entityAccessCheckService;
 
     @Autowired
-    private PhotoApplicationService photoApplicationService;
+    private PhotoFacadeService photoFacadeService;
 
     private static UUID userId;
     private static UUID photoId;
@@ -84,7 +84,7 @@ public class PhotoApplicationServiceTest {
         Mockito.when(photoDomainService.savePhoto(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(photo);
         MultipartFile multipartFile = getMockMultipartFile(correctFile);
         Mockito.doNothing().when(storageService).uploadFile(multipartFile, multipartFile.getName());
-        UserPhotoResponseDto userPhotoResponseDto = photoApplicationService.createUserPhoto(userId, multipartFile);
+        UserPhotoResponseDto userPhotoResponseDto = photoFacadeService.createUserPhoto(userId, multipartFile);
 
         assertThat(userPhotoResponseDto.getName()).isNotNull();
     }
@@ -96,7 +96,7 @@ public class PhotoApplicationServiceTest {
                 .thenThrow(HibernateException.class);
         MultipartFile multipartFile = getMockMultipartFile(correctFile);
 
-        assertThrows(HibernateException.class, () -> photoApplicationService.createUserPhoto(userId, multipartFile));
+        assertThrows(HibernateException.class, () -> photoFacadeService.createUserPhoto(userId, multipartFile));
     }
 
     @Test
@@ -104,7 +104,7 @@ public class PhotoApplicationServiceTest {
         Mockito.when(userDomainService.findUserById(userId)).thenThrow(UserNotFoundException.class);
         MultipartFile multipartFile = getMockMultipartFile(correctFile);
 
-        assertThrows(UserNotFoundException.class, () -> photoApplicationService.createUserPhoto(userId, multipartFile));
+        assertThrows(UserNotFoundException.class, () -> photoFacadeService.createUserPhoto(userId, multipartFile));
     }
 
     @Test
@@ -115,35 +115,35 @@ public class PhotoApplicationServiceTest {
         Mockito.doThrow(IncorrectFileFormatException.class).when(storageService).uploadFile(Mockito.any(), Mockito.any());
 
         assertThrows(IncorrectFileFormatException.class,
-                () -> photoApplicationService.createUserPhoto(userId, multipartFile));
+                () -> photoFacadeService.createUserPhoto(userId, multipartFile));
     }
 
     @Test
     void getUserPhotoByIdSuccessfulTest() {
         Mockito.when(photoDomainService.getPhotoByIdAndUserId(photoId, userId)).thenReturn(photo);
 
-        assertThat(photoApplicationService.getUserPhotoById(userId, photoId).getName()).isNotBlank();
+        assertThat(photoFacadeService.getUserPhotoById(userId, photoId).getName()).isNotBlank();
     }
 
     @Test
     void getUserPhotoByIdThrowPhotoNotFoundExceptionTest() {
         Mockito.when(photoDomainService.getPhotoByIdAndUserId(photoId, userId)).thenThrow(PhotoNotFoundException.class);
 
-        assertThrows(PhotoNotFoundException.class, () -> photoApplicationService.getUserPhotoById(userId, photoId));
+        assertThrows(PhotoNotFoundException.class, () -> photoFacadeService.getUserPhotoById(userId, photoId));
     }
 
     @Test
     void deleteUserPhotoByIdSuccessfulTest() {
         Mockito.when(photoDomainService.getPhotoByIdAndUserId(photoId, userId)).thenReturn(photo);
 
-        assertDoesNotThrow(() -> photoApplicationService.deleteUserPhotoById(userId, photoId));
+        assertDoesNotThrow(() -> photoFacadeService.deleteUserPhotoById(userId, photoId));
     }
 
     @Test
     void deleteUserPhotoByIdThrowPhotoNotFoundExceptionTest() {
         Mockito.when(photoDomainService.getPhotoByIdAndUserId(photoId, userId)).thenThrow(PhotoNotFoundException.class);
 
-        assertThrows(PhotoNotFoundException.class, () -> photoApplicationService.deleteUserPhotoById(userId, photoId));
+        assertThrows(PhotoNotFoundException.class, () -> photoFacadeService.deleteUserPhotoById(userId, photoId));
     }
 
     @Test
@@ -151,7 +151,7 @@ public class PhotoApplicationServiceTest {
         Mockito.when(photoDomainService.getPhotoByIdAndUserId(photoId, userId)).thenReturn(photo);
         Mockito.doThrow(HibernateException.class).when(photoDomainService).deletePhoto(photo);
 
-        assertThrows(HibernateException.class, () -> photoApplicationService.deleteUserPhotoById(userId, photoId));
+        assertThrows(HibernateException.class, () -> photoFacadeService.deleteUserPhotoById(userId, photoId));
     }
 
     @Test
@@ -160,7 +160,7 @@ public class PhotoApplicationServiceTest {
         Mockito.doThrow(ResourceAccessDeniedException.class).when(entityAccessCheckService).checkEntityAccess(photo);
 
         assertThrows(ResourceAccessDeniedException.class,
-                () -> photoApplicationService.deleteUserPhotoById(userId, photoId));
+                () -> photoFacadeService.deleteUserPhotoById(userId, photoId));
     }
 
     private MultipartFile getMockMultipartFile(File file) throws IOException {

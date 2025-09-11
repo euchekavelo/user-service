@@ -1,4 +1,4 @@
-package ru.tw1.euchekavelo.service.application;
+package ru.tw1.euchekavelo.service.facade;
 
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
@@ -30,17 +30,14 @@ import static ru.tw1.euchekavelo.exception.enums.ExceptionMessage.*;
 @Observed
 @Service
 @RequiredArgsConstructor
-public class UserApplicationService {
+public class UserFacadeService {
 
     private final UserDomainService userDomainService;
-    private final UserGroupDomainService userGroupDomainService;
     private final UserSubscriptionDomainService userSubscriptionDomainService;
-    private final TownDomainService townDomainService;
-    private final GroupDomainService groupDomainService;
     private final UserMapper userMapper;
     private final AuthServiceApiClient authServiceApiClient;
     private final AuthorizationService authorizationService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserApplicationService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserFacadeService.class);
 
     @Transactional(rollbackFor = Throwable.class)
     public UserResponseDto createUser(ShortUserRequestDto shortUserRequestDto) {
@@ -54,7 +51,9 @@ public class UserApplicationService {
         credentialsRequestDto.setType("password");
         credentialsRequestDto.setValue(shortUserRequestDto.getPassword());
         userRepresentationRequestDto.setCredentials(List.of(credentialsRequestDto));
-        authServiceApiClient.createUser(userRepresentationRequestDto);
+
+        String accessAdminToken = authServiceApiClient.getAdminToken().getAccessToken();
+        authServiceApiClient.createUser(userRepresentationRequestDto, accessAdminToken);
 
         return userMapper.userToUserResponseDto(savedUser);
     }
@@ -65,35 +64,45 @@ public class UserApplicationService {
         return userMapper.userToUserResponseDto(user);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Throwable.class)
     public UserResponseDto updateUserById(UUID id, UserRequestDto userRequestDto) {
         authorizationService.checkAccess(id);
 
         User user = userDomainService.findUserById(id);
-        Town town = townDomainService.findTownById(userRequestDto.getTownId());
 
+        String accessAdminToken = authServiceApiClient.getAdminToken().getAccessToken();
         UserExternalResponseDto userExternalResponseDto
-                = authServiceApiClient.getUsersByAttributeValue("user_id", id.toString())
+                = authServiceApiClient.getUsersByAttributeValue("user_id", id.toString(), accessAdminToken)
                 .orElseThrow(() -> {
                     LOGGER.error(USER_NOT_FOUND_EXCEPTION_MESSAGE.toString());
                     return new UserNotFoundException(USER_NOT_FOUND_EXCEPTION_MESSAGE.toString());
                 });
 
         User updatedUserWithFields = userMapper.userDtoToUser(user, userRequestDto);
-        updatedUserWithFields.setTown(town);
         User updatedUser = userDomainService.updateUser(updatedUserWithFields);
 
         UserRepresentationRequestDto userRepresentationRequestDto
                 = userMapper.userToUserRepresentationRequestDto(updatedUser);
         userRepresentationRequestDto.setCredentials(Collections.emptyList());
-        authServiceApiClient.updateUserById(userExternalResponseDto.getId(), userRepresentationRequestDto);
+        authServiceApiClient.updateUserById(userExternalResponseDto.getId(), userRepresentationRequestDto, accessAdminToken);
 
         return userMapper.userToUserResponseDto(updatedUser);
     }
 
+    @Transactional(rollbackFor = Throwable.class)
     public void deleteUserById(UUID id) {
         authorizationService.checkAccess(id);
         userDomainService.deleteUserById(id);
+
+        String accessAdminToken = authServiceApiClient.getAdminToken().getAccessToken();
+        UserExternalResponseDto userExternalResponseDto
+                = authServiceApiClient.getUsersByAttributeValue("user_id", id.toString(), accessAdminToken)
+                .orElseThrow(() -> {
+                    LOGGER.error(USER_NOT_FOUND_EXCEPTION_MESSAGE.toString());
+                    return new UserNotFoundException(USER_NOT_FOUND_EXCEPTION_MESSAGE.toString());
+                });
+
+        authServiceApiClient.deleteUserById(userExternalResponseDto.getId(), accessAdminToken);
     }
 
     public ResponseDto subscribeToUser(UserSubscriptionDto userSubscriptionDto) {
@@ -110,10 +119,13 @@ public class UserApplicationService {
         User destinationUser = userDomainService.findUserById(destinationUserId);
         userSubscriptionDomainService.createUserSubscription(sourceUser, destinationUser);
 
-        return getResponseDto("The target user was successfully subscribed.");
+        return ResponseDto.builder()
+                .message("The target user was successfully subscribed.")
+                .result(true)
+                .build();
     }
 
-    public ResponseDto unsubscribeFromUser(UserSubscriptionDto userSubscriptionDto) {
+    public void unsubscribeFromUser(UserSubscriptionDto userSubscriptionDto) {
         UUID sourceUserId = userSubscriptionDto.getSourceUserId();
         authorizationService.checkAccess(userSubscriptionDto.getSourceUserId());
         UUID destinationUserId = userSubscriptionDto.getDestinationUserId();
@@ -125,31 +137,5 @@ public class UserApplicationService {
 
         userSubscriptionDomainService
                 .deleteUserSubscriptionBySourceUserIdAndDestinationUserId(sourceUserId, destinationUserId);
-
-        return getResponseDto("The destination user has been unsubscribed successfully.");
-    }
-
-    public ResponseDto addUserToGroup(UUID userId, UUID groupId) {
-        authorizationService.checkAccess(userId);
-        User user = userDomainService.findUserById(userId);
-        Group group = groupDomainService.getGroupById(groupId);
-
-        userGroupDomainService.createUserGroup(user, group);
-
-        return getResponseDto("The user has been successfully added to the group.");
-    }
-
-    public ResponseDto deleteUserFromGroup(UUID userId, UUID groupId) {
-        authorizationService.checkAccess(userId);
-        userGroupDomainService.deleteUserGroupByUserIdAndGroupId(userId, groupId);
-
-        return getResponseDto("The user has been successfully removed from the group.");
-    }
-
-    private ResponseDto getResponseDto(String message) {
-        return ResponseDto.builder()
-                .message(message)
-                .result(true)
-                .build();
     }
 }

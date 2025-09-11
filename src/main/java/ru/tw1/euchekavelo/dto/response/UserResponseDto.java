@@ -33,9 +33,6 @@ public class UserResponseDto {
     @Schema(description = "Телефон")
     private String phone;
 
-    @Schema(description = "Информация о городе")
-    private TownResponseDto town;
-
     @Schema(description = "Пол")
     private Sex sex;
 
@@ -44,9 +41,6 @@ public class UserResponseDto {
 
     @Schema(description = "Информация о подписчиках")
     private List<UserSubscriptionResponseDto> subscribers;
-
-    @Schema(description = "Информация о группах")
-    private List<GroupResponseDto> groups;
 
     @Schema(description = "Информация о фото")
     private UserPhotoResponseDto photo;

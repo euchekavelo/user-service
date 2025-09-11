@@ -19,12 +19,6 @@ import java.util.List;
 public abstract class UserMapper {
 
     @Autowired
-    protected GroupMapper groupMapper;
-
-    @Autowired
-    protected TownMapper townMapper;
-
-    @Autowired
     protected PhotoMapper photoMapper;
 
     public UserResponseDto userToUserResponseDto(User user) {
@@ -37,8 +31,6 @@ public abstract class UserMapper {
         userResponseDto.setFirstName(user.getFirstName());
         userResponseDto.setMiddleName(user.getMiddleName());
         userResponseDto.setBirthDate(user.getBirthDate());
-        userResponseDto.setGroups(groupMapper.userGroupListToGroupReponseDtoList(user.getUserGroupList()));
-        userResponseDto.setTown(townMapper.townToTownResponseDto(user.getTown()));
         List<UserSubscriptionResponseDto> userSourceDtoList = user.getUserSourceList().stream()
                 .map(userSubscription -> new UserSubscriptionResponseDto(userSubscription.getDestinationUser().getId(),
                         userSubscription.getCreationTime()))
