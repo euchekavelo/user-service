@@ -47,10 +47,10 @@ aws:
     minio:
       endpoint: ${MINIO_ENDPOINT:http://localhost:9100/}
       signer: AWSS3V4SignerType
-      access-key: ${MINIO_ACCESS_KEY:xd8DjaCcYKiFebvkcBE0}
-      secret-key: ${MINIO_SECRET_KEY:6OEtCkbSyP2PbE5dlzVZ5quBvd15aDABQhTxPjDm}
+      access-key: ${MINIO_ACCESS_KEY:dTeBqJH2MLUWucSTlA0J}
+      secret-key: ${MINIO_SECRET_KEY:zVRTUwaUnPZs8VaopEQwhi3NuL54xcbTcYWMpRda}
       region: ${MINIO_REGION:ru-center}
-      bucket-posts: ${MINIO_BUCKET_NAME:users}
+      bucket-users: ${MINIO_BUCKET_NAME:users}
 
 
 management:

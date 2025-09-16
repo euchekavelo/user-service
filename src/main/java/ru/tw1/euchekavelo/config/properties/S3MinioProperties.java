@@ -13,6 +13,6 @@ public class S3MinioProperties {
     private String accessKey;
     private String secretKey;
     private String region;
-    private String bucketPosts;
+    private String bucketUsers;
     private String signer;
 }
