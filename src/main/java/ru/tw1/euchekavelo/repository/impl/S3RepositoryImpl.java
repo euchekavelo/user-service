@@ -21,18 +21,18 @@ public class S3RepositoryImpl implements S3Repository {
 
     @Override
     public void put(String name, InputStream inputStream, ObjectMetadata objectMetaData) {
-        amazonS3Client.putObject(s3MinioProperties.getBucketPosts(), name, inputStream, objectMetaData);
+        amazonS3Client.putObject(s3MinioProperties.getBucketUsers(), name, inputStream, objectMetaData);
     }
 
     @Override
     public void delete(String name) {
-        amazonS3Client.deleteObject(s3MinioProperties.getBucketPosts(), name);
+        amazonS3Client.deleteObject(s3MinioProperties.getBucketUsers(), name);
     }
 
     @Override
     public Optional<S3Object> get(String name) {
         try {
-            return Optional.of(amazonS3Client.getObject(s3MinioProperties.getBucketPosts(), name));
+            return Optional.of(amazonS3Client.getObject(s3MinioProperties.getBucketUsers(), name));
         } catch (AmazonServiceException exception) {
             return Optional.empty();
         }

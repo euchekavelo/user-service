@@ -59,7 +59,7 @@ public class PhotoFacadeService {
     }
 
     private String generateShortLinkForPhoto(String fileName) {
-        return s3MinioProperties.getBucketPosts() + "/" + fileName;
+        return s3MinioProperties.getBucketUsers() + "/" + fileName;
     }
 
     private String generateUniqueFileName(UUID userId, MultipartFile file) {
