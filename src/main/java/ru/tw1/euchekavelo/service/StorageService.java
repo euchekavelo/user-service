@@ -4,8 +4,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.tw1.euchekavelo.exception.IncorrectFileFormatException;
@@ -22,11 +21,11 @@ import static ru.tw1.euchekavelo.exception.enums.ExceptionMessage.INVALID_FILE_E
 @Observed
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StorageService {
 
     private final S3Repository s3Repository;
     private static final List<String> CORRECT_FILE_FORMATS = List.of("PNG", "JPEG", "JPG");
-    private static final Logger LOGGER = LoggerFactory.getLogger(StorageService.class);
 
     public void uploadFile(MultipartFile file, String fileName) {
         if (!isValidFormatFile(file)) {
@@ -34,7 +33,7 @@ public class StorageService {
             String errorMessage = INVALID_FILE_EXCEPTION_MESSAGE.getExceptionMessage() + " Рекомендуемые форматы: "
                     + enumerationFileFormats + ".";
 
-            LOGGER.error(errorMessage);
+            log.error(errorMessage);
             throw new IncorrectFileFormatException(errorMessage);
         }
 
@@ -45,6 +44,7 @@ public class StorageService {
 
             s3Repository.put(fileName, inputStream, objectMetadata);
         } catch (IOException e) {
+            log.error(e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -57,7 +57,7 @@ public class StorageService {
             s3Repository.delete(fileName);
         } catch (Exception ex) {
             optionalS3OldObject.ifPresent(this::uploadS3Object);
-            LOGGER.error(ex.getMessage());
+            log.error(ex.getMessage());
             throw ex;
         }
     }
@@ -66,6 +66,7 @@ public class StorageService {
         try (InputStream inputStream = s3Object.getObjectContent()) {
             s3Repository.put(s3Object.getKey(), inputStream, s3Object.getObjectMetadata());
         } catch (IOException ex) {
+            log.error(ex.getMessage());
             throw new RuntimeException(ex);
         }
     }

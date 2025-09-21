@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.tw1.euchekavelo.dto.external.request.AttributesRequestDto;
 import ru.tw1.euchekavelo.dto.external.request.CredentialsRequestDto;
 import ru.tw1.euchekavelo.dto.external.request.UserRepresentationRequestDto;
+import ru.tw1.euchekavelo.dto.external.response.UserExternalResponseDto;
 import ru.tw1.euchekavelo.dto.request.ShortUserRequestDto;
 import ru.tw1.euchekavelo.dto.request.UserRequestDto;
 import ru.tw1.euchekavelo.dto.response.UserResponseDto;
@@ -69,5 +70,9 @@ public abstract class UserMapper {
         return userRepresentationRequestDto;
     }
 
-    public abstract User userDtoToUser(@MappingTarget User user, UserRequestDto userRequestDto);
+    public abstract User userRequestDtoToUser(UserRequestDto userRequestDto);
+
+    public abstract User userToUser(@MappingTarget User toUser, User fromUser);
+
+    public abstract User userExternalResponseDtoToUser(UserExternalResponseDto userExternalResponseDto);
 }

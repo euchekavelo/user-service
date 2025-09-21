@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS users_scheme.users (
     middle_name CHARACTER VARYING,
     birth_date DATE,
     email CHARACTER VARYING NOT NULL UNIQUE,
+    password CHARACTER VARYING,
     phone CHARACTER VARYING UNIQUE,
 	photo_id UUID,
 	sex	CHARACTER VARYING(6) NOT NULL,

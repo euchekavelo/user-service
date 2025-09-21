@@ -18,9 +18,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.tw1.euchekavelo.dto.request.ShortUserRequestDto;
 import ru.tw1.euchekavelo.dto.request.UserRequestDto;
 import ru.tw1.euchekavelo.dto.response.ResponseDto;
-import ru.tw1.euchekavelo.dto.request.UserSubscriptionDto;
 import ru.tw1.euchekavelo.dto.response.UserResponseDto;
-import ru.tw1.euchekavelo.service.facade.UserFacadeService;
+import ru.tw1.euchekavelo.mapper.UserMapper;
+import ru.tw1.euchekavelo.model.User;
+import ru.tw1.euchekavelo.service.UserService;
 
 import java.util.UUID;
 
@@ -30,7 +31,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserFacadeService userFacadeService;
+    private final UserService userService;
+    private final UserMapper userMapper;
 
     @SecurityRequirements
     @Observed(contextualName = "Tracing createUser method controller")
@@ -48,7 +50,10 @@ public class UserController {
     })
     @PostMapping
     public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody ShortUserRequestDto shortUserRequestDto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(userFacadeService.createUser(shortUserRequestDto));
+        User user = userMapper.shortUserDtoToUser(shortUserRequestDto);
+        User savedUser = userService.createUser(user);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.userToUserResponseDto(savedUser));
     }
 
     @SecurityRequirements
@@ -67,7 +72,7 @@ public class UserController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUserById(@Parameter(description = "ID пользователя.") @PathVariable UUID id) {
-        return ResponseEntity.ok(userFacadeService.getUserById(id));
+        return ResponseEntity.ok(userMapper.userToUserResponseDto(userService.getUserById(id)));
     }
 
     @PreAuthorize("hasAnyAuthority('users_viewer', 'users_admin')")
@@ -91,7 +96,10 @@ public class UserController {
     public ResponseEntity<UserResponseDto> updateUserById(@Parameter(description = "ID пользователя.")
                                                           @PathVariable UUID id, @Valid @RequestBody UserRequestDto userRequestDto) {
 
-        return ResponseEntity.ok(userFacadeService.updateUserById(id, userRequestDto));
+        User user = userMapper.userRequestDtoToUser(userRequestDto);
+        User updatedUser = userService.updateUser(id, user);
+
+        return ResponseEntity.ok(userMapper.userToUserResponseDto(updatedUser));
     }
 
     @PreAuthorize("hasAnyAuthority('users_viewer', 'users_admin')")
@@ -108,50 +116,7 @@ public class UserController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@Parameter(description = "ID пользователя.") @PathVariable UUID id) {
-        userFacadeService.deleteUserById(id);
-
-        return ResponseEntity.noContent().build();
-    }
-
-    @PreAuthorize("hasAnyAuthority('users_viewer', 'users_admin')")
-    @Observed(contextualName = "Tracing subscribeToUser method controller")
-    @Operation(summary = "Создать подписку между пользователями.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class))
-            }),
-            @ApiResponse(responseCode = "400", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class))
-            }),
-            @ApiResponse(responseCode = "404", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class))
-            }),
-            @ApiResponse(responseCode = "500", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class))
-            })
-    })
-    @PostMapping("/subscription")
-    public ResponseEntity<ResponseDto> subscribeToUser(@RequestBody UserSubscriptionDto userSubscriptionDto) {
-        return ResponseEntity.ok(userFacadeService.subscribeToUser(userSubscriptionDto));
-    }
-
-    @PreAuthorize("hasAnyAuthority('users_viewer', 'users_admin')")
-    @Observed(contextualName = "Tracing unsubscribeFromUser method controller")
-    @Operation(summary = "Отменить подписку между пользователями.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class))
-            }),
-            @ApiResponse(responseCode = "400", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class))
-            }),
-            @ApiResponse(responseCode = "500", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class))
-            })
-    })
-    @DeleteMapping("/subscription")
-    public ResponseEntity<Void> unsubscribeFromUser(@RequestBody UserSubscriptionDto userSubscriptionDto) {
-        userFacadeService.unsubscribeFromUser(userSubscriptionDto);
+        userService.deleteUserById(id);
 
         return ResponseEntity.noContent().build();
     }

@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({UserNotFoundException.class, TownNotFoundException.class, GroupNotFoundException.class,
-            UserGroupNotFoundException.class, PhotoNotFoundException.class})
+            UserGroupNotFoundException.class, PhotoNotFoundException.class, UserSubscriptionNotFoundException.class})
     public ResponseEntity<ResponseDto> handleNotFoundException(Exception ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getResponseDto(ex.getMessage()));
     }

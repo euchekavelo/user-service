@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.tw1.euchekavelo.dto.response.ResponseDto;
 import ru.tw1.euchekavelo.dto.response.UserPhotoResponseDto;
-import ru.tw1.euchekavelo.service.facade.PhotoFacadeService;
+import ru.tw1.euchekavelo.mapper.PhotoMapper;
+import ru.tw1.euchekavelo.model.Photo;
+import ru.tw1.euchekavelo.service.PhotoService;
 
 import java.util.UUID;
 
@@ -29,7 +31,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserPhotoController {
 
-    private final PhotoFacadeService photoFacadeService;
+    private final PhotoService photoService;
+    private final PhotoMapper photoMapper;
 
     @PreAuthorize("hasAnyAuthority('users_viewer', 'users_admin')")
     @Observed(contextualName = "Tracing createUserPhoto method controller")
@@ -54,7 +57,9 @@ public class UserPhotoController {
                                                                 @Parameter(description = "Файл для загрузки.")
                                                                 MultipartFile file) {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(photoFacadeService.createUserPhoto(userId, file));
+        Photo photo = photoService.createUserPhoto(userId, file);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(photoMapper.photoToUserPhotoResponseDto(photo));
     }
 
     @SecurityRequirements
@@ -77,7 +82,9 @@ public class UserPhotoController {
                                                                  @Parameter(description = "ID фотографии.")
                                                                  @PathVariable UUID photoId) {
 
-        return ResponseEntity.ok(photoFacadeService.getUserPhotoById(userId, photoId));
+        Photo photo = photoService.getUserPhotoById(userId, photoId);
+
+        return ResponseEntity.ok(photoMapper.photoToUserPhotoResponseDto(photo));
     }
 
     @PreAuthorize("hasAnyAuthority('users_viewer', 'users_admin')")
@@ -101,7 +108,7 @@ public class UserPhotoController {
                                                     @Parameter(description = "ID фотографии.")
                                                     @PathVariable UUID photoId) {
 
-        photoFacadeService.deleteUserPhotoById(userId, photoId);
+        photoService.deleteUserPhotoById(userId, photoId);
 
         return ResponseEntity.noContent().build();
     }
