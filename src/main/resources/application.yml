@@ -39,7 +39,7 @@ spring:
         registration:
           keycloak:
             client-id: ${KEYCLOAK_CLIENT_ID:user-service}
-            client-secret: ${KEYCLOAK_CLIENT_SECRET:3t3zZ2yNVQeTgTHb6JMikA2NqHIquSSc}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET:AlJBczq2LsIY1Dg0yICMdrnys9J3sudJ}
             scope: openid
 
 aws:
@@ -47,8 +47,8 @@ aws:
     minio:
       endpoint: ${MINIO_ENDPOINT:http://localhost:9100/}
       signer: AWSS3V4SignerType
-      access-key: ${MINIO_ACCESS_KEY:dTeBqJH2MLUWucSTlA0J}
-      secret-key: ${MINIO_SECRET_KEY:zVRTUwaUnPZs8VaopEQwhi3NuL54xcbTcYWMpRda}
+      access-key: ${MINIO_ACCESS_KEY:C6tyGJ8XsmMLQd2noc34}
+      secret-key: ${MINIO_SECRET_KEY:yCZmp8CAKTID4uXCLxNdfpTlIVEw5zqa4WftwRfu}
       region: ${MINIO_REGION:ru-center}
       bucket-users: ${MINIO_BUCKET_NAME:users}
 
